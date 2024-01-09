@@ -1,9 +1,16 @@
+using Microsoft.EntityFrameworkCore;
+using plant_app_backend.Configuration;
+
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
 
 builder.Services.AddControllers();
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
+
+builder.Services.AddDbContext<ApplicationDbContext>(
+        options => options.UseSqlite("Data Source=DB/plant-app.db"));
+
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
