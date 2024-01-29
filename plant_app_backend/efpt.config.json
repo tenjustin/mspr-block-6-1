@@ -1,0 +1,49 @@
+﻿{
+   "CodeGenerationMode": 4,
+   "ContextClassName": "C:\\Users\\JUS.TENE\\Documents\\Cours\\MSPR-6.1\\plant_app_backend\\DB\\plant-app.dbContext",
+   "ContextNamespace": null,
+   "DefaultDacpacSchema": null,
+   "FilterSchemas": false,
+   "IncludeConnectionString": false,
+   "ModelNamespace": null,
+   "OutputContextPath": null,
+   "OutputPath": "Models",
+   "PreserveCasingWithRegex": true,
+   "ProjectRootNamespace": "plant_app_backend",
+   "Schemas": null,
+   "SelectedHandlebarsLanguage": 2,
+   "SelectedToBeGenerated": 1,
+   "T4TemplatePath": null,
+   "Tables": [
+      {
+         "Name": "Annonces",
+         "ObjectType": 0
+      },
+      {
+         "Name": "User",
+         "ObjectType": 0
+      }
+   ],
+   "UiHint": "C:\\Users\\JUS.TENE\\Documents\\Cours\\MSPR-6.1\\plant_app_backend\\DB\\plant-app.db",
+   "UncountableWords": null,
+   "UseBoolPropertiesWithoutDefaultSql": false,
+   "UseDatabaseNames": false,
+   "UseDateOnlyTimeOnly": true,
+   "UseDbContextSplitting": false,
+   "UseDecimalDataAnnotationForSprocResult": true,
+   "UseFluentApiOnly": true,
+   "UseHandleBars": false,
+   "UseHierarchyId": false,
+   "UseInflector": true,
+   "UseLegacyPluralizer": false,
+   "UseManyToManyEntity": false,
+   "UseNoDefaultConstructor": false,
+   "UseNoNavigations": false,
+   "UseNoObjectFilter": false,
+   "UseNodaTime": false,
+   "UseNullableReferences": false,
+   "UseSchemaFolders": false,
+   "UseSchemaNamespaces": false,
+   "UseSpatial": false,
+   "UseT4": false
+}

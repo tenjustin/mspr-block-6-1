@@ -11,6 +11,7 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <PackageReference Include="CoreAdmin" Version="2.7.1" />
     <PackageReference Include="Microsoft.AspNetCore.Authentication.JwtBearer" Version="8.0.1" />
     <PackageReference Include="Microsoft.EntityFrameworkCore" Version="8.0.1" />
     <PackageReference Include="Microsoft.EntityFrameworkCore.Sqlite" Version="8.0.1" />
@@ -24,6 +25,9 @@
 
   <ItemGroup>
     <Folder Include="DB\" />
+    <Folder Include="wwwroot\js\" />
+    <Folder Include="wwwroot\css\" />
+    <Folder Include="wwwroot\lib\" />
   </ItemGroup>
 
 </Project>

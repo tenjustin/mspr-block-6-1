@@ -40,6 +40,10 @@ builder.Services.AddAuthentication(options =>
 
 builder.Services.AddAuthorization();
 
+builder.Services.AddCoreAdmin();
+
+builder.Services.AddSqlite<ApplicationDbContext>("Data Source=DB/plant-app.db");
+
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.
@@ -48,6 +52,7 @@ if (app.Environment.IsDevelopment())
     app.UseSwagger();
     app.UseSwaggerUI();
 }
+app.UseStaticFiles();
 
 app.UseHttpsRedirection();
 
@@ -55,5 +60,6 @@ app.UseAuthentication();
 app.UseAuthorization();
 
 app.MapControllers();
+app.MapDefaultControllerRoute();
 
 app.Run();
