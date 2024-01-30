@@ -28,5 +28,11 @@ namespace plant_app_backend.DAL.Repository
                 throw;
             }
         }
+
+        public List<Annonces> GetAllAnnoncesByVille(string ville)
+        {
+            var annonces = _context.Annonces.Where(a => a.Ville == ville).ToList();
+            return annonces;
+        }
     }
 }

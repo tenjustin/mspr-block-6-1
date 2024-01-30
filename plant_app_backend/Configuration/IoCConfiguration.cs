@@ -1,4 +1,6 @@
-﻿using plant_app_backend.DAL.Repository;
+﻿using plant_app_backend.Common.Services;
+using plant_app_backend.Common.Services.Interface;
+using plant_app_backend.DAL.Repository;
 using plant_app_backend.DAL.Repository.Interface;
 
 namespace plant_app_backend.Configuration
@@ -9,6 +11,7 @@ namespace plant_app_backend.Configuration
         {
             services.AddScoped<IUserRepository, UserRepository>();
             services.AddScoped<IAnnoncesRepository, AnnoncesRepository>();
+            services.AddScoped<IAnnoncesService, AnnoncesService>();
         }
     }
 }

@@ -13,14 +13,17 @@ namespace plant_app_backend.DAL.Models
 
         public string Description { get; set; }
 
-        public List<string> Photos { get; set; }
+        public List<byte[]> Photos { get; set; }
 
         public User User { get; set; }
 
+        public string Ville { get; set; }
+
+        public DateTime DateCreation { get; set; } = DateTime.Now;
+
+        public DateTime DateModification { get; set; } = DateTime.Now;
+
         public bool IsAvailable { get; set; }
 
-        /*public double Latitude { get; set; }
-
-        public double Longitude { get; set; }*/
     }
 }
