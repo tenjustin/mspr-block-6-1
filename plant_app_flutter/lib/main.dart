@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'login_page.dart';
 import 'register_page.dart';
+import 'acceuil.dart';
+import 'annoucement.dart'; // Importez le fichier contenant la classe Announcement
 
 void main() {
   runApp(const MyApp());
@@ -31,8 +33,8 @@ class _AuthenticationPageState extends State<AuthenticationPage> {
   int _currentPageIndex = 0;
 
   final List<Widget> _pages = [
-    LoginPage(),
-    SignupPage(),
+    MyHomePage(),
+    SignupPage(), // Ajoutez la page d'inscription
   ];
 
   @override
