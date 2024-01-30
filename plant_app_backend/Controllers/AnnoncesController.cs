@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using plant_app_backend.Common.Models;
 using plant_app_backend.DAL.Models;
 using plant_app_backend.DAL.Repository.Interface;
 
@@ -18,10 +19,16 @@ namespace plant_app_backend.Controllers
 
         [Authorize]
         [HttpPost]
-        public ActionResult CreateAnnonce(Annonces annonces)
+        public ActionResult CreateAnnonce(AnnonceDto annonces)
         {
-            annoncesRepository.InsertAnnonce(annonces);
             return Ok(annonces);
+        }
+
+        [Authorize]
+        [HttpGet]
+        public ActionResult GetAnnoncesProche(string ville)
+        {            
+            return Ok(annoncesRepository.GetAllAnnoncesByVille(ville));
         }
     }
 }

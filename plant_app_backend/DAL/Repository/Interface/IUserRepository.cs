@@ -7,5 +7,7 @@ namespace plant_app_backend.DAL.Repository.Interface
         bool GetUserFromCred(string username, string password);
 
         public void InsertUser(User user);
+
+        User GetUserById(int id);
     }
 }

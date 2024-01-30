@@ -31,6 +31,13 @@ namespace plant_app_backend.DAL.Repository
             return true;
         }
 
+        public User GetUserById(int id)
+        {
+            var user = _context.User.Where(u => u.Id == id).FirstOrDefault();
+
+            return user;
+        }
+
         public void InsertUser(User user)
         {
             _context.User.Add(user);
