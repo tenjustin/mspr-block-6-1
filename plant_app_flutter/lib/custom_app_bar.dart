@@ -34,6 +34,12 @@ class CustomAppBar extends StatelessWidget implements PreferredSizeWidget {
             Navigator.of(context).pushNamed('/user'); // Replace with your route names
           },
         ),
+        IconButton(
+          icon: Icon(Icons.accessible_forward, color: Colors.black),
+          onPressed: () {
+            Navigator.of(context).pushNamed('/product'); // Replace with your route names
+          },
+        ),
       ],
     );
   }

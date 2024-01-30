@@ -1,7 +1,9 @@
+// Dans main.dart
 import 'package:flutter/material.dart';
-import 'custom_app_bar.dart';
+import 'custom_app_bar.dart'; // Importez CustomAppBar
 import 'product_page.dart';
 import 'user_page.dart';
+import 'home_page.dart';
 
 void main() => runApp(MyApp());
 
@@ -13,18 +15,12 @@ class MyApp extends StatefulWidget {
 class _MyAppState extends State<MyApp> {
   int _selectedIndex = 0;
 
-  // List of widgets to call on tab tap.
   final List<Widget> _widgetOptions = [
+    HomePage(),
     ProductPage(),
     UserPage(),
-    // Add more pages if you have them
+    // Ajoutez d'autres pages si nécessaire
   ];
-
-  void _onItemTapped(int index) {
-    setState(() {
-      _selectedIndex = index;
-    });
-  }
 
   @override
   Widget build(BuildContext context) {
@@ -34,32 +30,19 @@ class _MyAppState extends State<MyApp> {
         primarySwatch: Colors.green,
       ),
       home: Scaffold(
-        appBar: CustomAppBar(), // This stays common across all pages
-        body: IndexedStack( // This will preserve the state of each page
+        appBar: _selectedIndex != 0 ? CustomAppBar() : null, // Conditionnel
+        body: IndexedStack(
           index: _selectedIndex,
           children: _widgetOptions,
         ),
-        bottomNavigationBar: BottomNavigationBar(
-          items: const <BottomNavigationBarItem>[
-            BottomNavigationBarItem(
-              icon: Icon(Icons.home),
-              label: 'Home',
-            ),
-            BottomNavigationBarItem(
-              icon: Icon(Icons.business),
-              label: 'Product',
-            ),
-            BottomNavigationBarItem(
-              icon: Icon(Icons.school),
-              label: 'User',
-            ),
-            // Add more items for each page you have
-          ],
-          currentIndex: _selectedIndex,
-          selectedItemColor: Colors.amber[800],
-          onTap: _onItemTapped,
-        ),
+        // Le reste de votre Scaffold body
       ),
+      routes: {
+        '/home': (context) => _widgetOptions[0],
+        '/product': (context) => _widgetOptions[1],
+        '/user': (context) => _widgetOptions[2],
+        // Définissez d'autres routes ici
+      },
     );
   }
 }
