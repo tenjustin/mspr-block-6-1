@@ -4,6 +4,9 @@ import 'package:geolocator/geolocator.dart';
 import 'package:flutter_map/flutter_map.dart';
 import 'package:latlong2/latlong.dart';
 import 'annoucement.dart';
+import 'package:flutter/material.dart';
+import 'custom_app_bar.dart';
+import 'product_page.dart';
 
 class MyHomePage extends StatefulWidget {
   const MyHomePage({Key? key}) : super(key: key);
@@ -19,18 +22,29 @@ class _LocationPageState extends State<MyHomePage> {
   MapController _mapController = MapController();
 
 
+  void _navigateToHome() {
+    final currentRoute = ModalRoute.of(context);
+    if (currentRoute?.settings.name != '/') {
+      Navigator.pushReplacementNamed(context, '/');
+    }
+  }
+
   List<Announcement> announcements = [
     Announcement(
       title: "Titre 1",
       name: "John",
       lastName: "Doe",
       description: "Description de l'annonce 1.",
+      price: "10",
+      location: "Béziers"
     ),
     Announcement(
       title: "Titre 2",
       name: "Jane",
       lastName: "Doe",
       description: "Description de l'annonce 2.",
+      price: "16",
+      location: "Montpellier"
     ),
     // Ajoutez d'autres annonces au besoin
   ];
@@ -74,13 +88,44 @@ class _LocationPageState extends State<MyHomePage> {
     final hasPermission = await _handleLocationPermission();
 
     if (!hasPermission) return;
-    await Geolocator.getCurrentPosition(desiredAccuracy: LocationAccuracy.high)
-        .then((Position position) {
+
+    Position? position;
+
+    try {
+      position = await Geolocator.getCurrentPosition(desiredAccuracy: LocationAccuracy.high);
+    } catch (e) {
+      debugPrint("Error getting current position: $e");
+    }
+
+    if (position == null) {
+      // Position not available, request permission again
+      final shouldRequestPermission = await showDialog<bool>(
+        context: context,
+        builder: (BuildContext context) {
+          return AlertDialog(
+            title: Text("Location Permission"),
+            content: Text("We need your location to provide accurate information. Please grant location permission."),
+            actions: <Widget>[
+              TextButton(
+                onPressed: () => Navigator.of(context).pop(true),
+                child: Text("Grant"),
+              ),
+              TextButton(
+                onPressed: () => Navigator.of(context).pop(false),
+                child: Text("Deny"),
+              ),
+            ],
+          );
+        },
+      );
+
+      if (shouldRequestPermission == true) {
+        _handleLocationPermission(); // Request permission again
+      }
+    } else {
       setState(() => _currentPosition = position);
       _moveMapCamera(_currentPosition!);
-    }).catchError((e) {
-      debugPrint(e);
-    });
+    }
   }
 
   void _moveMapCamera(Position position) {
@@ -93,7 +138,7 @@ class _LocationPageState extends State<MyHomePage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: const Text("Accueil")),
+      appBar: CustomAppBar(),
       body: SafeArea(
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
@@ -171,6 +216,32 @@ class _LocationPageState extends State<MyHomePage> {
                           fontWeight: FontWeight.bold,
                         ),
                       ),
+
+                    ),
+                    Container(
+                      margin: EdgeInsets.all(10.0),
+                      child: ElevatedButton(
+                        onPressed: () {
+
+                          print("Déposer une annonce");
+                        },
+                        style: ButtonStyle(
+                          backgroundColor: MaterialStateProperty.all(Colors.greenAccent[400]),
+                          shape: MaterialStateProperty.all(
+                            RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(10.0),
+                            ),
+                          ),
+                        ),
+                        child: Text(
+                          "Déposer une annonce",
+                          style: TextStyle(
+                            color: Colors.black, // Set text color to black
+                            fontSize: 20.0, // Set font size to 20.0
+                            fontWeight: FontWeight.bold, // Optionally set font weight
+                          ),
+                        ),
+                      ),
                     ),
                     // Utilisation d'un GridView pour afficher les annonces côte à côte
                     Expanded(
@@ -185,7 +256,10 @@ class _LocationPageState extends State<MyHomePage> {
                           return _buildAnnouncementCard(announcements[index]);
                         },
                       ),
+
                     ),
+                    // Ajout du bouton "Déposer une annonce"
+
                   ],
                 ),
               ),
@@ -195,13 +269,12 @@ class _LocationPageState extends State<MyHomePage> {
       ),
     );
   }
-  // Ajoutez un bouton "Voir l'annonce"
   Widget _buildAnnouncementCard(Announcement announcement) {
     return Container(
       margin: EdgeInsets.all(10.0),
       padding: EdgeInsets.all(10.0),
       decoration: BoxDecoration(
-        color: Colors.green,
+        color: Colors.greenAccent[400],
         borderRadius: BorderRadius.circular(10.0),
       ),
       child: Column(
@@ -210,8 +283,8 @@ class _LocationPageState extends State<MyHomePage> {
           Text(
             announcement.title,
             style: TextStyle(
-              color: Colors.white,
-              fontSize: 18.0,
+              color: Colors.black,
+              fontSize: 20.0,
               fontWeight: FontWeight.bold,
             ),
           ),
@@ -219,7 +292,7 @@ class _LocationPageState extends State<MyHomePage> {
           Text(
             "${announcement.name} ${announcement.lastName}",
             style: TextStyle(
-              color: Colors.white,
+              color: Colors.black,
               fontSize: 16.0,
             ),
           ),
@@ -227,7 +300,7 @@ class _LocationPageState extends State<MyHomePage> {
           Text(
             announcement.description,
             style: TextStyle(
-              color: Colors.white,
+              color: Colors.black,
               fontSize: 14.0,
             ),
           ),
@@ -235,20 +308,40 @@ class _LocationPageState extends State<MyHomePage> {
           Expanded(
             child: ElevatedButton(
               onPressed: () {
-                // Ajoutez ici le code que vous souhaitez exécuter lorsque le bouton est cliqué
-                // Par exemple, naviguer vers une page d'annonce détaillée
-                print("Voir l'annonce ${announcement.title}");
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (context) => ProductPage(
+                      title: announcement.title,
+                      location: announcement.location,
+                      price: announcement.price ?? "N/A", // Provide a default value if price is null
+                      description: announcement.description,
+                      ownerName: announcement.name,
+                      ownerImage: 'url_to_owner_image', // Replace with the owner's image URL
+                      ownerRating: 4.5, // Replace with the owner's rating
+                    ),
+                  ),
+                );
               },
               style: ButtonStyle(
-                fixedSize: MaterialStateProperty.all(Size(120.0, 30.0)), // Ajustez la taille du bouton selon vos besoins
+                shape: MaterialStateProperty.all<RoundedRectangleBorder>(
+                  RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(10.0),
+                  ),
+                ),
+                backgroundColor: MaterialStateProperty.all(Colors.white),
               ),
-              child: Text("Voir l'annonce"),
+              child: Text(
+                "Voir l'annonce",
+                style: TextStyle(
+                  color: Colors.black,
+                  fontSize: 16.0,
+                ),
+              ),
             ),
           ),
         ],
       ),
     );
   }
-
-
 }
