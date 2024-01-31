@@ -46,7 +46,6 @@ class _LocationPageState extends State<MyHomePage> {
       price: "16",
       location: "Montpellier"
     ),
-    // Ajoutez d'autres annonces au besoin
   ];
 
   @override
@@ -63,7 +62,7 @@ class _LocationPageState extends State<MyHomePage> {
     if (!serviceEnabled) {
       ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
           content: Text(
-              'Location services are disabled. Please enable the services')));
+              'La localisation est désactivé , activé la')));
       return false;
     }
     permission = await Geolocator.checkPermission();
@@ -78,7 +77,7 @@ class _LocationPageState extends State<MyHomePage> {
     if (permission == LocationPermission.deniedForever) {
       ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
           content: Text(
-              'Location permissions are permanently denied, we cannot request permissions.')));
+              'La localisation est désactivé')));
       return false;
     }
     return true;
