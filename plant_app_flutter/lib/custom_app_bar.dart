@@ -14,14 +14,14 @@ class CustomAppBar extends StatelessWidget implements PreferredSizeWidget {
               TextButton(
                 style: TextButton.styleFrom(primary: Colors.white),
                 onPressed: () {
-                  Navigator.of(context).pushNamed('/'); // Replace with your route names
+                  Navigator.of(context).pushNamed('/');
                 },
                 child: Text('Accueil'),
               ),
               TextButton(
                 style: TextButton.styleFrom(primary: Colors.white),
                 onPressed: () {
-                  Navigator.of(context).pushNamed('/announcements'); // Replace with your route names
+                  Navigator.of(context).pushNamed('/announcements');
                 },
                 child: Text('Annonce'),
               ),

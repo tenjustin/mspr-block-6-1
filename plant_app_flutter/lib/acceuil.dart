@@ -7,6 +7,7 @@ import 'annoucement.dart';
 import 'package:flutter/material.dart';
 import 'custom_app_bar.dart';
 import 'product_page.dart';
+import 'addannouncementpage.dart';
 
 class MyHomePage extends StatefulWidget {
   const MyHomePage({Key? key}) : super(key: key);
@@ -62,7 +63,7 @@ class _LocationPageState extends State<MyHomePage> {
     if (!serviceEnabled) {
       ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
           content: Text(
-              'La localisation est désactivé , activé la')));
+              'La localisation est désactivé , activé')));
       return false;
     }
     permission = await Geolocator.checkPermission();
@@ -97,7 +98,6 @@ class _LocationPageState extends State<MyHomePage> {
     }
 
     if (position == null) {
-      // Position not available, request permission again
       final shouldRequestPermission = await showDialog<bool>(
         context: context,
         builder: (BuildContext context) {
@@ -119,7 +119,7 @@ class _LocationPageState extends State<MyHomePage> {
       );
 
       if (shouldRequestPermission == true) {
-        _handleLocationPermission(); // Request permission again
+        _handleLocationPermission();
       }
     } else {
       setState(() => _currentPosition = position);
@@ -152,8 +152,10 @@ class _LocationPageState extends State<MyHomePage> {
                   ),
                 ),
                 child: Column(
-                  mainAxisAlignment: MainAxisAlignment.center,
+                  mainAxisAlignment: MainAxisAlignment.start,
                   children: [
+                    SizedBox(height: 20.0),
+
                     Container(
                       height: 300,
                       width: 500,
@@ -221,8 +223,10 @@ class _LocationPageState extends State<MyHomePage> {
                       margin: EdgeInsets.all(10.0),
                       child: ElevatedButton(
                         onPressed: () {
-
-                          print("Déposer une annonce");
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(builder: (context) => AddAnnouncementPage()),
+                          );
                         },
                         style: ButtonStyle(
                           backgroundColor: MaterialStateProperty.all(Colors.greenAccent[400]),
@@ -235,9 +239,9 @@ class _LocationPageState extends State<MyHomePage> {
                         child: Text(
                           "Déposer une annonce",
                           style: TextStyle(
-                            color: Colors.black, // Set text color to black
-                            fontSize: 20.0, // Set font size to 20.0
-                            fontWeight: FontWeight.bold, // Optionally set font weight
+                            color: Colors.black,
+                            fontSize: 20.0,
+                            fontWeight: FontWeight.bold,
                           ),
                         ),
                       ),
@@ -257,7 +261,6 @@ class _LocationPageState extends State<MyHomePage> {
                       ),
 
                     ),
-                    // Ajout du bouton "Déposer une annonce"
 
                   ],
                 ),
@@ -313,11 +316,11 @@ class _LocationPageState extends State<MyHomePage> {
                     builder: (context) => ProductPage(
                       title: announcement.title,
                       location: announcement.location,
-                      price: announcement.price ?? "N/A", // Provide a default value if price is null
+                      price: announcement.price ?? "N/A",
                       description: announcement.description,
                       ownerName: announcement.name,
-                      ownerImage: 'url_to_owner_image', // Replace with the owner's image URL
-                      ownerRating: 4.5, // Replace with the owner's rating
+                      ownerImage: 'url_to_owner_image',
+                      ownerRating: 4.5,
                     ),
                   ),
                 );
