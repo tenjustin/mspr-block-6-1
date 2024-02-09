@@ -11,7 +11,10 @@ class MyApp extends StatelessWidget {
   }
 }
 
+
 class LoginPage extends StatelessWidget {
+  const LoginPage({Key? key}) : super(key: key);
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -78,7 +81,8 @@ class LoginPage extends StatelessWidget {
                         onPressed: () {
                           // Ajoutez ici la logique de connexion
                         },
-                        child: Text('Se connecter',
+                        child: Text(
+                          'Se connecter',
                           style: TextStyle(
                             color: Colors.lightGreen[500], // Texte en noir pour une meilleure lisibilité
                             fontSize: 14.0,

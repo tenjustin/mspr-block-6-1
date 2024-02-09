@@ -50,9 +50,9 @@ class _AuthenticationPageState extends State<AuthenticationPage> {
   int _currentPageIndex = 0;
 
   final List<Widget> _pages = [
-    MyHomePage(),
     SignupPage(),
     LoginPage(),
+    MyHomePage(),
     ProductPage(
       title: "title",
       location: "location",
