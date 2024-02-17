@@ -63,7 +63,6 @@ class SignupPage extends StatelessWidget {
                         SizedBox(height: 16.0),
                         ElevatedButton(
                           onPressed: () {
-                            // Ajoutez ici la logique d'inscription
                           },
                           child: Text(
                             'S\'inscrire',
