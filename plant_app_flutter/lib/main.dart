@@ -5,6 +5,7 @@ import 'register_page.dart';
 import 'acceuil.dart';
 import 'annoucement.dart';
 import 'product_page.dart';
+import 'annonce.dart';
 
 void main() {
   runApp(const MyApp());
@@ -24,6 +25,7 @@ class MyApp extends StatelessWidget {
       initialRoute: '/',
       routes: {
         '/': (context) => AuthenticationPage(),
+        '/announcements': (context) => AnnoncePage(),
         '/home': (context) => MyHomePage(),
         '/signup': (context) => SignupPage(),
         '/login': (context) => LoginPage(),
