@@ -1,6 +1,7 @@
 import 'dart:io';
 
 class Announcement {
+  final int? id;
   final String title;
   final String name;
   final String lastName;
@@ -11,8 +12,10 @@ class Announcement {
   final double? latitude;
   final double? longitude;
   final int? userId;
+  final String imageUrl;
 
   Announcement({
+    this.id,
     required this.title,
     required this.name,
     required this.lastName,
@@ -22,7 +25,8 @@ class Announcement {
     this.file,
     this.latitude,
     this.longitude,
-    this.userId
+    this.userId,
+    required this.imageUrl,
   });
 
   Map<String, dynamic> toJson(){

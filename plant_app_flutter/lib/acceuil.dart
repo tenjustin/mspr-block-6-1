@@ -40,6 +40,8 @@ class _LocationPageState extends State<MyHomePage> {
       location: "Béziers",
       latitude: 43.6109, // Ajoutez la latitude de l'annonce
       longitude: 3.8772, // Ajoutez la longitude de l'annonce
+      location: "Béziers",
+      imageUrl: ""
     ),
     Announcement(
       title: "Titre 2",
@@ -50,6 +52,8 @@ class _LocationPageState extends State<MyHomePage> {
       location: "Montpellier",
       latitude: 37.4319983, // Ajoutez la latitude de l'annonce
       longitude: -122.684, // Ajoutez la longitude de l'annonce
+      location: "Montpellier",
+      imageUrl: ""
     ),
   ];
 
@@ -386,7 +390,7 @@ class _LocationPageState extends State<MyHomePage> {
                   context,
                   MaterialPageRoute(
                     builder: (context) => ProductPage(
-                      announcement: announcement,
+                      id: 2,
                     ),
                   ),
                 );

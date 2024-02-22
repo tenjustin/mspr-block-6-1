@@ -20,7 +20,6 @@ namespace plant_app_backend.DAL.Repository
 
             try
             {
-                _context.User.Attach(annonce.User);
                 _context.SaveChanges();
             }
             catch (Exception ex)
@@ -39,6 +38,12 @@ namespace plant_app_backend.DAL.Repository
         {
             var annonce = _context.Annonces.FirstOrDefault(a => a.Id == id);
             return annonce.ImageName;
+        }
+
+        public Annonces GetAnnonceById(int id)
+        {
+            var annonce = _context.Annonces.FirstOrDefault(a => a.Id == id);
+            return annonce;
         }
     }
 }

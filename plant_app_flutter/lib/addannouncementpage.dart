@@ -223,6 +223,7 @@ class _AddAnnouncementPageState extends State<AddAnnouncementPage> {
                           latitude: latitude,
                           longitude: longitude,
                           userId: user.id,
+                          imageUrl: ""
                         );
 
                         annonceServices.createAnnonce(newAnnouncement, context);

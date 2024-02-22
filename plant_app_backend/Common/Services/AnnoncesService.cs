@@ -38,7 +38,6 @@ namespace plant_app_backend.Common.Services
                 Titre = annonceDto.Title,
                 Description = annonceDto.Description,
                 ImageName = filename,
-                User = _userRepository.GetUserById(annonceDto.UserId),
                 Ville = annonceDto.Location,
                 IsAvailable = true,
                 Price = annonceDto.Price,

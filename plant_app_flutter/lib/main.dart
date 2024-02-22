@@ -1,4 +1,8 @@
+import 'dart:io';
+
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
+import 'package:plant_app_flutter/providers/http_client_provider.dart';
 import 'package:plant_app_flutter/user_page.dart';
 import 'chat.dart';
 import 'Messagerie.dart';
@@ -9,7 +13,15 @@ import 'models/annoucement.dart';
 import 'product_page.dart';
 import 'annonce.dart';
 
-void main() {
+Future<SecurityContext> get globalContext async {
+  final sslCert = await rootBundle.load('assets/localhost.crt');
+  SecurityContext securityContext = SecurityContext.defaultContext;
+  securityContext.setTrustedCertificatesBytes(sslCert.buffer.asInt8List());
+  return securityContext;
+}
+
+void main() async {
+  HttpOverrides.global = ClientProvider();
   runApp(const MyApp());
 }
 

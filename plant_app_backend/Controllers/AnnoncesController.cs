@@ -15,10 +15,13 @@ namespace plant_app_backend.Controllers
 
         private readonly IAnnoncesService annoncesService;
 
-        public AnnoncesController(IAnnoncesRepository annoncesRepository, IAnnoncesService annoncesService)
+        private readonly IUserRepository _userRepository;
+
+        public AnnoncesController(IAnnoncesRepository annoncesRepository, IAnnoncesService annoncesService, IUserRepository userRepository)
         {
             this.annoncesRepository = annoncesRepository;
             this.annoncesService = annoncesService;
+            _userRepository = userRepository;
         }
 
         [Authorize]
@@ -52,6 +55,7 @@ namespace plant_app_backend.Controllers
             var result = annoncesRepository.GetAllAnnoncesByVille(ville);
             var res = result.Select(a =>
             {                
+                var user = _userRepository.GetUserById(a.UserId);
                 return new
                 {
                     Title = a.Titre,
@@ -60,14 +64,16 @@ namespace plant_app_backend.Controllers
                     Price = a.Price,
                     Latitude = a.Latitude,
                     Longitude = a.Longitude,
-                    UserId = a.User.Id,
-                    ImageUrl = $"https://localhost:5001/api/annonces/image/{a.Id}"
+                    UserId = a.UserId,
+                    ImageUrl = $"https://localhost:5001/api/annonces/image/{a.Id}",
+                    name = user.Prenom,
+                    lastName = user.Nom
                 };
             });
             return Ok(res);
         }
 
-        [Authorize]
+     
         [HttpGet("image/{id}")]
         public ActionResult GetImageFromAnnonce(int id)
         {
@@ -83,6 +89,29 @@ namespace plant_app_backend.Controllers
 
             // Retourner le fichier image avec le type de contenu approprié
             return PhysicalFile(imagePath, contentType);
+        }
+
+        [Authorize]
+        [HttpGet("{id}")]
+        public ActionResult GetAnnonceById(int id)
+        {
+            var result = annoncesRepository.GetAnnonceById(id);
+            var user = _userRepository.GetUserById(result.UserId);
+            var res = new
+            {
+                id = result.Id,
+                title = result.Titre,
+                description = result.Description,
+                location = result.Ville,
+                price = result.Price,
+                latitude = result.Latitude,
+                longitude = result.Longitude,
+                userId = result.UserId,
+                imageUrl = $"https://10.0.2.2:32770/api/annonces/image/{result.Id}",
+                name = user.Prenom,
+                lastName = user.Nom
+            };
+            return Ok(res);
         }
     }
 }

@@ -24,7 +24,7 @@ class AnnonceServices {
 
   createAnnonce(Announcement announcement, BuildContext context) async{
     String token = await tokenProvider.getToken();
-    var client = clientProvider.createClient();
+    var client = await clientProvider.createClient();
 
     String url = 'https://10.0.2.2:32770/api/annonces/createannonce';
     Uri uri = Uri.parse(url);
@@ -58,5 +58,43 @@ class AnnonceServices {
     } finally {
       client.close();
     }
+  }
+
+  Future<Announcement?> getAnnonce(int? id) async {
+    String token = await tokenProvider.getToken();
+    var client = await clientProvider.createClient();
+
+    String url = 'https://10.0.2.2:32770/api/annonces/$id';
+    Uri uri = Uri.parse(url);
+
+    var request = http.Request('GET', uri);
+    request.headers['Authorization'] = 'Bearer $token';
+    try{
+      final response = await client.send(request);
+      if(response.statusCode == HttpStatus.ok){
+        String responseBody = await response.stream.bytesToString();
+        Map<String, dynamic> responseData = json.decode(responseBody);
+        Announcement annonce = Announcement(
+          id: responseData['id'],
+          title: responseData['title'],
+          description: responseData['description'],
+          location: responseData['location'],
+          price: responseData['price'].toString(),
+          latitude: responseData['latitude'],
+          longitude: responseData['longitude'],
+          userId: responseData['userId'],
+          name: responseData['name'],
+          lastName: responseData['lastName'],
+          imageUrl: responseData['imageUrl']
+        );
+
+        return annonce;
+      }
+    }
+    catch (e){
+      print(e);
+      return null;
+    }
+    return null;
   }
 }

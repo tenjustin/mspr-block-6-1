@@ -36,7 +36,7 @@ class LoginPage extends StatelessWidget {
     Uri uri = Uri.parse(apiUrl);
     String requestBody = jsonEncode({'identifiant': username, 'password': password});
 
-    var client = httpProvider.createClient();
+    var client = await httpProvider.createClient();
 
     final request = http.Request('POST', uri);
 
