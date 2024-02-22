@@ -5,6 +5,7 @@ import 'Messagerie.dart';
 import 'login_page.dart';
 import 'register_page.dart';
 import 'acceuil.dart';
+import 'models/annoucement.dart';
 import 'product_page.dart';
 import 'annonce.dart';
 
@@ -57,15 +58,6 @@ class _AuthenticationPageState extends State<AuthenticationPage> {
     SignupPage(),
     LoginPage(),
     MyHomePage(),
-    ProductPage(
-      title: "title",
-      location: "location",
-      price: "price",
-      description: "description",
-      ownerName: "ownerName",
-      ownerImage: "ownerImage",
-      ownerRating: 4,
-    )
   ];
 
   @override
