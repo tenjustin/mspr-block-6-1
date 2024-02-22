@@ -30,6 +30,9 @@ class ProductPage extends StatelessWidget {
 
     return FutureBuilder(future: annonceServices.getAnnonce(id),
         builder: (context, AsyncSnapshot<Announcement?> announcement){
+      if(announcement.connectionState == ConnectionState.waiting){
+        return const CircularProgressIndicator();
+      }
           return Scaffold(
             appBar: CustomAppBar(),
             body: SingleChildScrollView(
@@ -101,9 +104,9 @@ class ProductPage extends StatelessWidget {
           );
         });
     }
-  Future<Uint8List> fetchImage(String imageUrl) async {
+  Future<Uint8List> fetchImage(String? imageUrl) async {
     var client = await clientProvider.createClient();
-    final request = http.Request('GET', Uri.parse(imageUrl));
+    final request = http.Request('GET', Uri.parse(imageUrl!));
     var response = await client.send(request);
     if (response.statusCode == 200) {
       return response.stream.toBytes();

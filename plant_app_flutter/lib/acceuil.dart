@@ -3,6 +3,9 @@ import 'package:geocoding/geocoding.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:flutter_map/flutter_map.dart';
 import 'package:latlong2/latlong.dart';
+import 'package:plant_app_flutter/providers/http_client_provider.dart';
+import 'package:plant_app_flutter/providers/token_provider.dart';
+import 'package:plant_app_flutter/services/annonces_services.dart';
 import 'models/annoucement.dart';
 import 'package:flutter/material.dart';
 import 'custom_app_bar.dart';
@@ -19,7 +22,9 @@ class MyHomePage extends StatefulWidget {
 class _LocationPageState extends State<MyHomePage> {
   String? _currentAddress;
   Position? _currentPosition;
-
+  static ClientProvider clientProvider = ClientProvider();
+  static TokenProvider tokenProvider = TokenProvider();
+  static AnnonceServices annonceServices = AnnonceServices(clientProvider: clientProvider, tokenProvider: tokenProvider);
   MapController _mapController = MapController();
 
 
@@ -41,7 +46,9 @@ class _LocationPageState extends State<MyHomePage> {
       latitude: 43.6109, // Ajoutez la latitude de l'annonce
       longitude: 3.8772, // Ajoutez la longitude de l'annonce
       location: "Béziers",
-      imageUrl: ""
+      latitude: 43.6109, // Ajoutez la latitude de l'annonce
+      longitude: 3.8772, // Ajoutez la longitude de l'annonce
+      location: "Béziers",
     ),
     Announcement(
       title: "Titre 2",
@@ -53,7 +60,9 @@ class _LocationPageState extends State<MyHomePage> {
       latitude: 37.4319983, // Ajoutez la latitude de l'annonce
       longitude: -122.684, // Ajoutez la longitude de l'annonce
       location: "Montpellier",
-      imageUrl: ""
+      latitude: 37.4319983, // Ajoutez la latitude de l'annonce
+      longitude: -122.684, // Ajoutez la longitude de l'annonce
+      location: "Montpellier",
     ),
   ];
 
@@ -156,6 +165,14 @@ class _LocationPageState extends State<MyHomePage> {
   }
 
 
+  Future<String> getCurrentVille() async {
+    List<Placemark> placemarks = await placemarkFromCoordinates(_currentPosition!.latitude, _currentPosition!.longitude);
+    if (placemarks.isNotEmpty) {
+      return placemarks[0].locality ?? '';
+    }
+    return '';
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -194,12 +211,11 @@ class _LocationPageState extends State<MyHomePage> {
                 child: Column(
                   mainAxisAlignment: MainAxisAlignment.start,
                   children: [
-                    SizedBox(height: 20.0),
-
+                    const SizedBox(height: 20.0),
                     Container(
                       height: 300,
                       width: 500,
-                      margin: EdgeInsets.symmetric(horizontal: 20.0),
+                      margin: const EdgeInsets.symmetric(horizontal: 20.0),
                       decoration: BoxDecoration(
                         borderRadius: BorderRadius.circular(15.0),
                         boxShadow: [
@@ -207,7 +223,7 @@ class _LocationPageState extends State<MyHomePage> {
                             color: Colors.black.withOpacity(0.3),
                             spreadRadius: 2,
                             blurRadius: 5,
-                            offset: Offset(0, 2),
+                            offset: const Offset(0, 2),
                           ),
                         ],
                       ),
@@ -225,7 +241,7 @@ class _LocationPageState extends State<MyHomePage> {
                           children: [
                             TileLayer(
                               urlTemplate: 'https://tile.openstreetmap.org/{z}/{x}/{y}.png',
-                              subdomains: ['a', 'b', 'c'],
+                              subdomains: const ['a', 'b', 'c'],
                             ),
                             MarkerLayer(
                               markers: [
@@ -237,7 +253,7 @@ class _LocationPageState extends State<MyHomePage> {
                                     _currentPosition?.latitude ?? 0.0,
                                     _currentPosition?.longitude ?? 0.0,
                                   ),
-                                  child: Icon(
+                                  child: const Icon(
                                     Icons.location_pin,
                                     color: Colors.red,
                                   ),
@@ -284,8 +300,8 @@ class _LocationPageState extends State<MyHomePage> {
                       ),
                     ),
                     Container(
-                      margin: EdgeInsets.only(top: 20.0),
-                      child: Text(
+                      margin: const EdgeInsets.only(top: 20.0),
+                      child: const Text(
                         "ANNONCE",
                         style: TextStyle(
                           color: Colors.black,
@@ -296,7 +312,7 @@ class _LocationPageState extends State<MyHomePage> {
 
                     ),
                     Container(
-                      margin: EdgeInsets.all(10.0),
+                      margin: const EdgeInsets.all(10.0),
                       child: ElevatedButton(
                         onPressed: () {
                           Navigator.push(
@@ -312,7 +328,7 @@ class _LocationPageState extends State<MyHomePage> {
                             ),
                           ),
                         ),
-                        child: Text(
+                        child: const Text(
                           "Déposer une annonce",
                           style: TextStyle(
                             color: Colors.black,
@@ -324,20 +340,25 @@ class _LocationPageState extends State<MyHomePage> {
                     ),
                     // Utilisation d'un GridView pour afficher les annonces côte à côte
                     Expanded(
-                      child: GridView.builder(
-                        gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-                          crossAxisCount: 2, // Nombre de colonnes dans le GridView
-                          crossAxisSpacing: 10.0, // Espacement horizontal entre les éléments
-                          mainAxisSpacing: 10.0, // Espacement vertical entre les éléments
-                        ),
-                        itemCount: announcements.length,
-                        itemBuilder: (context, index) {
-                          return _buildAnnouncementCard(announcements[index]);
+                      child: FutureBuilder(future: annonceServices.getHomeAnnonce('Mountain View'),
+                        builder: (context, AsyncSnapshot<List<Announcement>> annonces){
+                          if(annonces.connectionState == ConnectionState.waiting){
+                            return const CircularProgressIndicator();
+                          }
+                          return GridView.builder(
+                            gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+                              crossAxisCount: 2, // Nombre de colonnes dans le GridView
+                              crossAxisSpacing: 10.0, // Espacement horizontal entre les éléments
+                              mainAxisSpacing: 10.0, // Espacement vertical entre les éléments
+                            ),
+                            itemCount: annonces.data!.length,
+                            itemBuilder: (context, index) {
+                              return _buildAnnouncementCard(annonces.data![index]);
+                            },
+                          );
                         },
                       ),
-
                     ),
-
                   ],
                 ),
               ),
@@ -360,29 +381,29 @@ class _LocationPageState extends State<MyHomePage> {
         children: [
           Text(
             announcement.title,
-            style: TextStyle(
+            style: const TextStyle(
               color: Colors.black,
               fontSize: 20.0,
               fontWeight: FontWeight.bold,
             ),
           ),
-          SizedBox(height: 8.0),
+          const SizedBox(height: 8.0),
           Text(
             "${announcement.name} ${announcement.lastName}",
-            style: TextStyle(
+            style: const TextStyle(
               color: Colors.black,
               fontSize: 16.0,
             ),
           ),
-          SizedBox(height: 8.0),
+          const SizedBox(height: 8.0),
           Text(
             announcement.description,
-            style: TextStyle(
+            style: const TextStyle(
               color: Colors.black,
               fontSize: 14.0,
             ),
           ),
-          SizedBox(height: 8.0),
+          const SizedBox(height: 8.0),
           Expanded(
             child: ElevatedButton(
               onPressed: () {
@@ -390,7 +411,7 @@ class _LocationPageState extends State<MyHomePage> {
                   context,
                   MaterialPageRoute(
                     builder: (context) => ProductPage(
-                      id: 2,
+                      id: announcement.id,
                     ),
                   ),
                 );
@@ -403,7 +424,7 @@ class _LocationPageState extends State<MyHomePage> {
                 ),
                 backgroundColor: MaterialStateProperty.all(Colors.white),
               ),
-              child: Text(
+              child: const Text(
                 "Voir l'annonce",
                 style: TextStyle(
                   color: Colors.black,

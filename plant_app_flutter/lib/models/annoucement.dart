@@ -12,7 +12,7 @@ class Announcement {
   final double? latitude;
   final double? longitude;
   final int? userId;
-  final String imageUrl;
+  final String? imageUrl;
 
   Announcement({
     this.id,
@@ -26,8 +26,9 @@ class Announcement {
     this.latitude,
     this.longitude,
     this.userId,
-    required this.imageUrl,
+    this.imageUrl,
   });
+
 
   Map<String, dynamic> toJson(){
     return {

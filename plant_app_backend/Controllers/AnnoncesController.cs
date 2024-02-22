@@ -49,8 +49,8 @@ namespace plant_app_backend.Controllers
         }
 
         [Authorize]
-        [HttpGet]
-        public ActionResult GetAnnoncesProche(string ville)
+        [HttpPost("HomePage")]
+        public ActionResult GetAnnoncesProche([FromBody]string ville)
         { 
             var result = annoncesRepository.GetAllAnnoncesByVille(ville);
             var res = result.Select(a =>
@@ -58,14 +58,15 @@ namespace plant_app_backend.Controllers
                 var user = _userRepository.GetUserById(a.UserId);
                 return new
                 {
-                    Title = a.Titre,
-                    Description = a.Description,
-                    Location = a.Ville,
-                    Price = a.Price,
-                    Latitude = a.Latitude,
-                    Longitude = a.Longitude,
-                    UserId = a.UserId,
-                    ImageUrl = $"https://localhost:5001/api/annonces/image/{a.Id}",
+                    id = a.Id,
+                    title = a.Titre,
+                    description = a.Description,
+                    location = a.Ville,
+                    price = a.Price,
+                    latitude = a.Latitude,
+                    longitude = a.Longitude,
+                    userId = a.UserId,
+                    imageUrl = $"https://localhost:5001/api/annonces/image/{a.Id}",
                     name = user.Prenom,
                     lastName = user.Nom
                 };
