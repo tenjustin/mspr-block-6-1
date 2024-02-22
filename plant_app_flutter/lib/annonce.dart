@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'annoucement.dart'; // Assurez-vous que le chemin d'importation est correct
+import 'models/annoucement.dart'; // Assurez-vous que le chemin d'importation est correct
 import 'product_page.dart'; // Assurez-vous que cette page est correctement définie
 import 'custom_app_bar.dart'; // Assurez-vous que ce widget est correctement défini
 
@@ -12,6 +12,8 @@ class AnnoncePage extends StatelessWidget {
       description: "J'ai besoin d'un garde plante pour pouvoir garder mes plantes",
       location: 'Location example', // Remplacez par l'emplacement réel
       price: 'Price example', // Remplacez par le prix réel si disponible
+      latitude: 0.0,
+      longitude: 0.0,
     ),
     Announcement(
       title: 'ntm',
@@ -20,6 +22,8 @@ class AnnoncePage extends StatelessWidget {
       description: "J'ai besoin d'un garde ntm pour pouvoir garder mes ntm",
       location: 'Location ntm', // Remplacez par l'emplacement réel
       price: 'Price ntm', // Remplacez par le prix réel si disponible
+      latitude: 0.0,
+      longitude: 0.0,
     ),
   ];
 
@@ -66,13 +70,13 @@ class AnnoncePage extends StatelessWidget {
                 context,
                 MaterialPageRoute(
                   builder: (context) => ProductPage(
-                    title: announcement.title,
+                    title: "Toi",
                     location: announcement.location,
                     price: announcement.price ?? "N/A", // Fournissez une valeur par défaut si le prix est null
                     description: announcement.description,
                     ownerName: announcement.name,
                     ownerImage: 'url_to_owner_image', // Remplacez par l'URL de l'image du propriétaire
-                    ownerRating: 4.5, // Remplacez par la note du propriétaire
+                    ownerRating: 4.5,  // Remplacez par la note du propriétaire
                   ),
                 ),
               );
