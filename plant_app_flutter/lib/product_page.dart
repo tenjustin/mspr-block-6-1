@@ -1,24 +1,15 @@
 import 'package:flutter/material.dart';
+import 'package:plant_app_flutter/models/annoucement.dart';
 import 'custom_app_bar.dart';
 
 class ProductPage extends StatelessWidget {
-  final String title;
-  final String location;
-  final String price;
-  final String description;
-  final String ownerName;
-  final String ownerImage;
-  final double ownerRating;
+  final Announcement announcement;
+  final String ownerImage = 'url-to-image';
+  final double ownerRating = 4.5;
 
   ProductPage({
-    required this.title,
-    required this.location,
-    required this.price,
-    required this.description,
-    required this.ownerName,
-    required this.ownerImage,
-    required this.ownerRating,
-  });
+    required this.announcement
+});
 
   @override
   Widget build(BuildContext context) {
@@ -47,7 +38,7 @@ class ProductPage extends StatelessWidget {
                   ),
                   Expanded(
                     child: ListTile(
-                      title: Text(ownerName, style: titleStyle),
+                      title: Text(announcement.name, style: titleStyle),
                       subtitle: Row(
                         children: <Widget>[
                           Icon(Icons.star, color: Colors.yellow, size: 20),
@@ -75,11 +66,11 @@ class ProductPage extends StatelessWidget {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: <Widget>[
-                  Text(title, style: titleStyle),
-                  Text(location, style: contentStyle),
-                  Text(price, style: titleStyle),
+                  Text(announcement.title, style: titleStyle),
+                  Text(announcement.location, style: contentStyle),
+                  Text(announcement.price.toString(), style: titleStyle),
                   SizedBox(height: 16.0),
-                  Text(description, style: contentStyle),
+                  Text(announcement.description, style: contentStyle),
                   SizedBox(height: 16.0),
                   Text('[Habitudes du propriétaire]', style: contentStyle),
                 ],

@@ -14,7 +14,7 @@ class CustomAppBar extends StatelessWidget implements PreferredSizeWidget {
               TextButton(
                 style: TextButton.styleFrom(primary: Colors.white),
                 onPressed: () {
-                  Navigator.of(context).pushNamed('/');
+                  Navigator.of(context).pushNamed('/home');
                 },
                 child: Text('Accueil'),
               ),

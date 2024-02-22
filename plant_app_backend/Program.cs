@@ -44,6 +44,8 @@ builder.Services.AddCoreAdmin();
 
 builder.Services.AddSqlite<ApplicationDbContext>("Data Source=DB/plant-app.db");
 
+Directory.CreateDirectory("img");
+
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.

@@ -3,7 +3,7 @@ import 'package:plant_app_flutter/user_page.dart';
 import 'login_page.dart';
 import 'register_page.dart';
 import 'acceuil.dart';
-import 'annoucement.dart';
+import 'models/annoucement.dart';
 import 'product_page.dart';
 
 void main() {
@@ -28,15 +28,6 @@ class MyApp extends StatelessWidget {
         '/signup': (context) => SignupPage(),
         '/login': (context) => LoginPage(),
         '/user': (context) => UserPage(), // Replace with your user page
-        '/product': (context) => ProductPage(
-          title: "title",
-          location: "location",
-          price: "price",
-          description: "description",
-          ownerName: "ownerName",
-          ownerImage: "ownerImage",
-          ownerRating: 4,
-        ),
       },
     );
   }
@@ -53,15 +44,6 @@ class _AuthenticationPageState extends State<AuthenticationPage> {
     SignupPage(),
     LoginPage(),
     MyHomePage(),
-    ProductPage(
-      title: "title",
-      location: "location",
-      price: "price",
-      description: "description",
-      ownerName: "ownerName",
-      ownerImage: "ownerImage",
-      ownerRating: 4,
-    )
   ];
 
   @override

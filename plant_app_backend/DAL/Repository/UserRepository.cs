@@ -13,22 +13,23 @@ namespace plant_app_backend.DAL.Repository
             _context = context;
         }
 
-        public bool GetUserFromCred(string username, string password)
-        {              
+        public User GetUserFromCred(string username, string password)
+        {
+            User user;
             try
             {
-                var user = _context.User.Where(u => u.Pseudo == username && u.Password == password);
+                user = _context.User.Where(u => u.Pseudo == username && u.Password == password).Single();
                 if (user == null)
                 {
-                    return false;
+                    throw new NullReferenceException("Aucun utilisateur correspondant");
                 }
             }
             catch (Exception ex)
             {
-                throw;
+                return null;
             }
 
-            return true;
+            return user;
         }
 
         public User GetUserById(int id)
