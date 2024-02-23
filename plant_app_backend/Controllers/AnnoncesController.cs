@@ -66,7 +66,7 @@ namespace plant_app_backend.Controllers
                     latitude = a.Latitude,
                     longitude = a.Longitude,
                     userId = a.UserId,
-                    imageUrl = $"https://localhost:5001/api/annonces/image/{a.Id}",
+                    imageUrl = $"https://localhost:32768/api/annonces/image/{a.Id}",
                     name = user.Prenom,
                     lastName = user.Nom
                 };
@@ -108,7 +108,7 @@ namespace plant_app_backend.Controllers
                 latitude = result.Latitude,
                 longitude = result.Longitude,
                 userId = result.UserId,
-                imageUrl = $"https://10.0.2.2:32770/api/annonces/image/{result.Id}",
+                imageUrl = $"https://10.0.2.2:32768/api/annonces/image/{result.Id}",
                 name = user.Prenom,
                 lastName = user.Nom
             };

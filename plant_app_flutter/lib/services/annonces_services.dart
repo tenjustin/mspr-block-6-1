@@ -26,7 +26,7 @@ class AnnonceServices {
     String token = await tokenProvider.getToken();
     var client = await clientProvider.createClient();
 
-    String url = 'https://10.0.2.2:32770/api/annonces/createannonce';
+    String url = 'https://10.0.2.2:32768/api/annonces/createannonce';
     Uri uri = Uri.parse(url);
 
     final request = http.MultipartRequest('POST', uri);
@@ -64,7 +64,7 @@ class AnnonceServices {
     String token = await tokenProvider.getToken();
     var client = await clientProvider.createClient();
 
-    String url = 'https://10.0.2.2:32770/api/annonces/$id';
+    String url = 'https://10.0.2.2:32768/api/annonces/$id';
     Uri uri = Uri.parse(url);
 
     var request = http.Request('GET', uri);
@@ -99,7 +99,7 @@ class AnnonceServices {
   }
 
   Future<List<Announcement>> getHomeAnnonce(String location) async {
-    String apiUrl = 'https://10.0.2.2:32770/api/annonces/homepage';
+    String apiUrl = 'https://10.0.2.2:32768/api/annonces/homepage';
     String token = await tokenProvider.getToken();
 
     Uri uri = Uri.parse(apiUrl);
@@ -118,7 +118,6 @@ class AnnonceServices {
       if(response.statusCode == HttpStatus.ok){
         String responseBody = await response.stream.bytesToString();
         List<dynamic> responseData = json.decode(responseBody);
-        print(responseData);
         List<Announcement> announcements = [];
         for(var data in responseData){
           announcements.add(Announcement(

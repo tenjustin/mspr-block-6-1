@@ -29,7 +29,7 @@ class LoginPage extends StatelessWidget {
   ClientProvider httpProvider = ClientProvider();
 
   tryAuth(BuildContext context) async {
-    String apiUrl = 'https://10.0.2.2:32770/api/User/loguser';
+    String apiUrl = 'https://10.0.2.2:32768/api/User/loguser';
     String username = usernameController.text;
     String password = passwordController.text;
 

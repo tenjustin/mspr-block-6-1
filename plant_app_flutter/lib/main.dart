@@ -38,22 +38,13 @@ class MyApp extends StatelessWidget {
       ),
       initialRoute: '/',
       routes: {
-        '/': (context) => MyHomePage(),
+        '/': (context) => AuthenticationPage(),
         '/announcements': (context) => AnnoncePage(),
         '/home': (context) => MyHomePage(),
         '/signup': (context) => SignupPage(),
         '/login': (context) => LoginPage(),
         '/user': (context) => UserPage(),
         '/MessagingPage': (context) => MessagingPage(),
-        '/product': (context) => ProductPage(
-          title: "title",
-          location: "location",
-          price: "price",
-          description: "description",
-          ownerName: "ownerName",
-          ownerImage: "ownerImage",
-          ownerRating: 4,
-        ),
       },
     );
   }
@@ -67,8 +58,8 @@ class _AuthenticationPageState extends State<AuthenticationPage> {
   int _currentPageIndex = 0;
 
   final List<Widget> _pages = [
-    SignupPage(),
     LoginPage(),
+    SignupPage(),
     MyHomePage(),
   ];
 

@@ -70,13 +70,7 @@ class AnnoncePage extends StatelessWidget {
                 context,
                 MaterialPageRoute(
                   builder: (context) => ProductPage(
-                    title: "Toi",
-                    location: announcement.location,
-                    price: announcement.price ?? "N/A", // Fournissez une valeur par défaut si le prix est null
-                    description: announcement.description,
-                    ownerName: announcement.name,
-                    ownerImage: 'url_to_owner_image', // Remplacez par l'URL de l'image du propriétaire
-                    ownerRating: 4.5,  // Remplacez par la note du propriétaire
+                    id: announcement.id, // Remplacez par la note du propriétaire
                   ),
                 ),
               );

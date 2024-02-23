@@ -21,6 +21,7 @@ class MyHomePage extends StatefulWidget {
 
 class _LocationPageState extends State<MyHomePage> {
   String? _currentAddress;
+  String? _currentVille;
   Position? _currentPosition;
   static ClientProvider clientProvider = ClientProvider();
   static TokenProvider tokenProvider = TokenProvider();
@@ -45,10 +46,6 @@ class _LocationPageState extends State<MyHomePage> {
       location: "Béziers",
       latitude: 43.6109, // Ajoutez la latitude de l'annonce
       longitude: 3.8772, // Ajoutez la longitude de l'annonce
-      location: "Béziers",
-      latitude: 43.6109, // Ajoutez la latitude de l'annonce
-      longitude: 3.8772, // Ajoutez la longitude de l'annonce
-      location: "Béziers",
     ),
     Announcement(
       title: "Titre 2",
@@ -59,15 +56,11 @@ class _LocationPageState extends State<MyHomePage> {
       location: "Montpellier",
       latitude: 37.4319983, // Ajoutez la latitude de l'annonce
       longitude: -122.684, // Ajoutez la longitude de l'annonce
-      location: "Montpellier",
-      latitude: 37.4319983, // Ajoutez la latitude de l'annonce
-      longitude: -122.684, // Ajoutez la longitude de l'annonce
-      location: "Montpellier",
     ),
   ];
 
   @override
-  void initState() {
+  void initState()  {
     super.initState();
     _getCurrentPosition();
   }
@@ -243,58 +236,66 @@ class _LocationPageState extends State<MyHomePage> {
                               urlTemplate: 'https://tile.openstreetmap.org/{z}/{x}/{y}.png',
                               subdomains: const ['a', 'b', 'c'],
                             ),
-                            MarkerLayer(
-                              markers: [
-                                // Ajoutez d'abord le marqueur pour la position actuelle
-                                Marker(
-                                  width: 80.0,
-                                  height: 80.0,
-                                  point: LatLng(
-                                    _currentPosition?.latitude ?? 0.0,
-                                    _currentPosition?.longitude ?? 0.0,
-                                  ),
-                                  child: const Icon(
-                                    Icons.location_pin,
-                                    color: Colors.red,
-                                  ),
-                                ),
-                                // Parcourez maintenant les annonces et ajoutez des marqueurs pour chacune
-                                for (var announcement in announcements)
-                                  if (announcement.latitude != null && announcement.longitude != null)
-                                    Marker(
-                                      width: 80.0,
-                                      height: 80.0,
-                                      point: LatLng(
-                                        // Convertissez la localisation de l'annonce en latitude et longitude
-                                        announcement.latitude!,
-                                        announcement.longitude!,
-                                      ),
-                                      // Utilisez InkWell pour détecter les clics sur le marqueur
-                                      child: InkWell(
-                                        onTap: () {
-                                          Navigator.push(
-                                            context,
-                                            MaterialPageRoute(
-                                              builder: (context) => ProductPage(
-                                                title: announcement.title,
-                                                location: announcement.location,
-                                                price: announcement.price ?? "N/A",
-                                                description: announcement.description,
-                                                ownerName: announcement.name,
-                                                ownerImage: 'url_to_owner_image',
-                                                ownerRating: 4.5,
+                            FutureBuilder(future: getCurrentVille(),
+                                builder: (context, AsyncSnapshot<String> ville){
+                                  if (ville.connectionState == ConnectionState.active ||
+                                      ville.connectionState == ConnectionState.waiting || ville.data == null) {
+                                    return CircularProgressIndicator();
+                                  }
+                              return FutureBuilder(future: annonceServices.getHomeAnnonce(ville.data!),
+                                  builder: (context, AsyncSnapshot<List<Announcement>> annonces){
+                                    if (annonces.connectionState == ConnectionState.active ||
+                                        annonces.connectionState == ConnectionState.waiting) {
+                                      return CircularProgressIndicator();
+                                        }
+                                    return MarkerLayer(
+                                      markers: [
+                                        // Ajoutez d'abord le marqueur pour la position actuelle
+                                        Marker(
+                                          width: 80.0,
+                                          height: 80.0,
+                                          point: LatLng(
+                                            _currentPosition?.latitude ?? 0.0,
+                                            _currentPosition?.longitude ?? 0.0,
+                                          ),
+                                          child: const Icon(
+                                            Icons.location_pin,
+                                            color: Colors.red,
+                                          ),
+                                        ),
+                                        // Parcourez maintenant les annonces et ajoutez des marqueurs pour chacune
+                                        for (var announcement in annonces.data!)
+                                          if (announcement.latitude != null && announcement.longitude != null)
+                                            Marker(
+                                              width: 80.0,
+                                              height: 80.0,
+                                              point: LatLng(
+                                                // Convertissez la localisation de l'annonce en latitude et longitude
+                                                announcement.latitude!,
+                                                announcement.longitude!,
+                                              ),
+                                              // Utilisez InkWell pour détecter les clics sur le marqueur
+                                              child: InkWell(
+                                                onTap: () {
+                                                  Navigator.push(
+                                                    context,
+                                                    MaterialPageRoute(
+                                                      builder: (context) => ProductPage(
+                                                        id: announcement.id,
+                                                      ),
+                                                    ),
+                                                  );
+                                                },
+                                                child: Icon(
+                                                  Icons.place,
+                                                  color: Colors.blue,
+                                                ),
                                               ),
                                             ),
-                                          );
-                                        },
-                                        child: Icon(
-                                          Icons.place,
-                                          color: Colors.blue,
-                                        ),
-                                      ),
-                                    ),
-                              ],
-                            ),
+                                      ],
+                                    );
+                                  });
+                                })
                           ],
                         ),
                       ),
