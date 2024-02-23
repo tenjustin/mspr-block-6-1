@@ -39,7 +39,7 @@ class MyApp extends StatelessWidget {
           description: "description",
           ownerName: "ownerName",
           ownerImage: "ownerImage",
-          ownerRating: 4,
+          ownerRating: 3,
         ),
       },
     );
@@ -64,7 +64,7 @@ class _AuthenticationPageState extends State<AuthenticationPage> {
       description: "description",
       ownerName: "ownerName",
       ownerImage: "ownerImage",
-      ownerRating: 4,
+      ownerRating: 3,
     )
   ];
 

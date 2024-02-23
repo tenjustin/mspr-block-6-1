@@ -106,8 +106,8 @@ class _LocationPageState extends State<MyHomePage> {
         context: context,
         builder: (BuildContext context) {
           return AlertDialog(
-            title: Text("Location Permission"),
-            content: Text("We need your location to provide accurate information. Please grant location permission."),
+            title: Text("Location refusé"),
+            content: Text("Nous avons besoin de votre localisation."),
             actions: <Widget>[
               TextButton(
                 onPressed: () => Navigator.of(context).pop(true),
@@ -148,7 +148,7 @@ class _LocationPageState extends State<MyHomePage> {
     } catch (e) {
       print('Error converting address to coordinates: $e');
     }
-    return LatLng(0.0, 0.0); // Retourne une position par défaut si la conversion échoue
+    return LatLng(0.0, 0.0);
   }
 
 
@@ -225,7 +225,6 @@ class _LocationPageState extends State<MyHomePage> {
                             ),
                             MarkerLayer(
                               markers: [
-                                // Ajoutez d'abord le marqueur pour la position actuelle
                                 Marker(
                                   width: 80.0,
                                   height: 80.0,
@@ -238,18 +237,15 @@ class _LocationPageState extends State<MyHomePage> {
                                     color: Colors.red,
                                   ),
                                 ),
-                                // Parcourez maintenant les annonces et ajoutez des marqueurs pour chacune
                                 for (var announcement in announcements)
                                   if (announcement.latitude != null && announcement.longitude != null)
                                     Marker(
                                       width: 80.0,
                                       height: 80.0,
                                       point: LatLng(
-                                        // Convertissez la localisation de l'annonce en latitude et longitude
                                         announcement.latitude!,
                                         announcement.longitude!,
                                       ),
-                                      // Utilisez InkWell pour détecter les clics sur le marqueur
                                       child: InkWell(
                                         onTap: () {
                                           Navigator.push(

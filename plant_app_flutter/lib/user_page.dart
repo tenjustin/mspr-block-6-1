@@ -6,7 +6,7 @@ class UserPage extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: CustomAppBar(),
-      backgroundColor: Colors.green, // Définit la couleur de fond du Scaffold
+      backgroundColor: Colors.green,
       body: SingleChildScrollView(
         child: Center(
           child: Padding(
@@ -40,9 +40,9 @@ class UserPage extends StatelessWidget {
                   }),
                 ),
                 SizedBox(height: 16.0),
-                SectionBubble(title: 'Plantes gardées', content: 'Bernard\nParfaitement fiable je recommande'),
+                SectionBubble(title: 'Avis', content: 'Bernard\nParfaitement fiable je recommande'),
                 SizedBox(height: 16.0),
-                SectionBubble(title: 'Plantes à garder', content: 'Besoin de garde\nPetite description de l\'annonce'),
+                SectionBubble(title: 'Bio', content: 'Je suis passioné de plante'),
                 SizedBox(height: 20.0),
               ],
             ),

@@ -75,7 +75,7 @@ class LoginPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Colors.white, // Fond blanc pour la page
+      backgroundColor: Colors.white,
       body: Center(
         child: Padding(
           padding: const EdgeInsets.all(16.0),
@@ -86,7 +86,7 @@ class LoginPage extends StatelessWidget {
               Text(
                 'Connexion',
                 style: TextStyle(
-                  color: Colors.lightGreen[500], // Texte en noir pour une meilleure lisibilité
+                  color: Colors.lightGreen[500],
                   fontSize: 24.0,
                   fontWeight: FontWeight.bold,
                 ),
@@ -94,10 +94,10 @@ class LoginPage extends StatelessWidget {
               ),
               SizedBox(height: 16.0),
               Container(
-                width: 300.0, // Largeur du conteneur réduite
+                width: 300.0,
                 decoration: BoxDecoration(
-                  color: Colors.green[50], // Fond vert pour le conteneur
-                  borderRadius: BorderRadius.circular(10.0), // Coins arrondis
+                  color: Colors.green[50],
+                  borderRadius: BorderRadius.circular(10.0),
                 ),
                 child: Padding(
                   padding: const EdgeInsets.all(16.0),
@@ -106,10 +106,10 @@ class LoginPage extends StatelessWidget {
                     crossAxisAlignment: CrossAxisAlignment.stretch,
                     children: [
                       Card(
-                        elevation: 0, // Pas d'ombre
-                        color: Colors.white, // Fond blanc pour le champ de saisie
+                        elevation: 0,
+                        color: Colors.white,
                         shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(8.0), // Coins arrondis
+                          borderRadius: BorderRadius.circular(8.0),
                         ),
                         child: TextField(
                           decoration: InputDecoration(
@@ -121,10 +121,10 @@ class LoginPage extends StatelessWidget {
                       ),
                       SizedBox(height: 16.0),
                       Card(
-                        elevation: 0, // Pas d'ombre
-                        color: Colors.white, // Fond blanc pour le champ de saisie
+                        elevation: 0,
+                        color: Colors.white,
                         shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(8.0), // Coins arrondis
+                          borderRadius: BorderRadius.circular(8.0),
                         ),
                         child: TextField(
                           obscureText: true,
@@ -138,13 +138,13 @@ class LoginPage extends StatelessWidget {
                       SizedBox(height: 32.0),
                       ElevatedButton(
                         onPressed: () {
-                          // Ajoutez ici la logique de connexion
+
                           tryAuth(context);
                         },
                         child: Text(
                           'Se connecter',
                           style: TextStyle(
-                            color: Colors.lightGreen[500], // Texte en noir pour une meilleure lisibilité
+                            color: Colors.lightGreen[500],
                             fontSize: 14.0,
                             fontWeight: FontWeight.bold,
                           ),

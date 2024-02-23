@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'models/conversation.dart';
 
 class ChatPage extends StatelessWidget {
   final Conversation conversation;
@@ -88,26 +89,4 @@ class MessageBubble extends StatelessWidget {
       ],
     );
   }
-}
-
-class Conversation {
-  final int id;
-  final String title;
-  final List<Message> messages;
-
-  Conversation({
-    required this.id,
-    required this.title,
-    required this.messages,
-  });
-}
-
-class Message {
-  final String content;
-  final bool isMe;
-
-  Message({
-    required this.content,
-    required this.isMe,
-  });
 }

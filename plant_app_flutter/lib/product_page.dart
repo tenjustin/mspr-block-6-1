@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'custom_app_bar.dart';
 import 'chat.dart';
+import 'models/conversation.dart';
 
 class ProductPage extends StatelessWidget {
   final String title;
@@ -35,7 +36,7 @@ class ProductPage extends StatelessWidget {
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: <Widget>[
             Image.network(
-              'url_to_product_image', // Replace with your image URL
+              'url_to_product_image',
               height: 250,
               fit: BoxFit.cover,
             ),
@@ -44,7 +45,7 @@ class ProductPage extends StatelessWidget {
               child: Row(
                 children: <Widget>[
                   CircleAvatar(
-                    backgroundImage: NetworkImage(ownerImage), // Use the owner's image URL
+                    backgroundImage: NetworkImage(ownerImage),
                     radius: 30,
                   ),
                   Expanded(
@@ -71,6 +72,7 @@ class ProductPage extends StatelessWidget {
                           builder: (context) => ChatPage(conversation:Conversation(
                             id: 1,
                             title: 'John Doe',
+                            lastMessage: 'Salut, comment ça va ?',
                             messages: [
                               Message(content: 'Salut, comment ça va ?', isMe: true),
                               Message(content: 'Ça va bien, merci ! Et toi ?', isMe: false),
