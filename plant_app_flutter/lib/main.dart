@@ -1,9 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:plant_app_flutter/user_page.dart';
+import 'chat.dart';
+import 'Messagerie.dart';
 import 'login_page.dart';
 import 'register_page.dart';
 import 'acceuil.dart';
-import 'annoucement.dart';
 import 'product_page.dart';
 import 'annonce.dart';
 
@@ -24,12 +25,13 @@ class MyApp extends StatelessWidget {
       ),
       initialRoute: '/',
       routes: {
-        '/': (context) => AuthenticationPage(),
+        '/': (context) => MyHomePage(),
         '/announcements': (context) => AnnoncePage(),
         '/home': (context) => MyHomePage(),
         '/signup': (context) => SignupPage(),
         '/login': (context) => LoginPage(),
-        '/user': (context) => UserPage(), // Replace with your user page
+        '/user': (context) => UserPage(),
+        '/MessagingPage': (context) => MessagingPage(),
         '/product': (context) => ProductPage(
           title: "title",
           location: "location",
@@ -97,4 +99,3 @@ class _AuthenticationPageState extends State<AuthenticationPage> {
     );
   }
 }
-

@@ -3,7 +3,7 @@ import 'package:geocoding/geocoding.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:flutter_map/flutter_map.dart';
 import 'package:latlong2/latlong.dart';
-import 'annoucement.dart';
+import 'models/annoucement.dart';
 import 'package:flutter/material.dart';
 import 'custom_app_bar.dart';
 import 'product_page.dart';
@@ -37,7 +37,9 @@ class _LocationPageState extends State<MyHomePage> {
       lastName: "Doe",
       description: "Description de l'annonce 1.",
       price: "10",
-      location: "Béziers"
+      location: "Béziers",
+      latitude: 43.6109, // Ajoutez la latitude de l'annonce
+      longitude: 3.8772, // Ajoutez la longitude de l'annonce
     ),
     Announcement(
       title: "Titre 2",
@@ -45,7 +47,9 @@ class _LocationPageState extends State<MyHomePage> {
       lastName: "Doe",
       description: "Description de l'annonce 2.",
       price: "16",
-      location: "Montpellier"
+      location: "Montpellier",
+      latitude: 37.4319983, // Ajoutez la latitude de l'annonce
+      longitude: -122.684, // Ajoutez la longitude de l'annonce
     ),
   ];
 
@@ -128,15 +132,47 @@ class _LocationPageState extends State<MyHomePage> {
   }
 
   void _moveMapCamera(Position position) {
+    print('Latitude: ${position.latitude}, Longitude: ${position.longitude}');
     _mapController.move(
       LatLng(position.latitude, position.longitude),
       15.0,
     );
   }
 
+  Future<LatLng> _getLocationFromAddress(String address) async {
+    try {
+      List<Location> locations = await locationFromAddress(address);
+      if (locations.isNotEmpty) {
+        return LatLng(locations[0].latitude, locations[0].longitude);
+      }
+    } catch (e) {
+      print('Error converting address to coordinates: $e');
+    }
+    return LatLng(0.0, 0.0); // Retourne une position par défaut si la conversion échoue
+  }
+
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      floatingActionButton: Column(
+        mainAxisAlignment: MainAxisAlignment.end,
+        children: [
+          FloatingActionButton(
+            onPressed: () {
+              _mapController.move(_mapController.center, _mapController.zoom + 1);
+            },
+            child: Icon(Icons.zoom_in),
+          ),
+          SizedBox(height: 10),
+          FloatingActionButton(
+            onPressed: () {
+              _mapController.move(_mapController.center, _mapController.zoom - 1);
+            },
+            child: Icon(Icons.zoom_out),
+          ),
+        ],
+      ),
       appBar: CustomAppBar(),
       body: SafeArea(
         child: Column(
@@ -189,6 +225,7 @@ class _LocationPageState extends State<MyHomePage> {
                             ),
                             MarkerLayer(
                               markers: [
+                                // Ajoutez d'abord le marqueur pour la position actuelle
                                 Marker(
                                   width: 80.0,
                                   height: 80.0,
@@ -201,6 +238,41 @@ class _LocationPageState extends State<MyHomePage> {
                                     color: Colors.red,
                                   ),
                                 ),
+                                // Parcourez maintenant les annonces et ajoutez des marqueurs pour chacune
+                                for (var announcement in announcements)
+                                  if (announcement.latitude != null && announcement.longitude != null)
+                                    Marker(
+                                      width: 80.0,
+                                      height: 80.0,
+                                      point: LatLng(
+                                        // Convertissez la localisation de l'annonce en latitude et longitude
+                                        announcement.latitude!,
+                                        announcement.longitude!,
+                                      ),
+                                      // Utilisez InkWell pour détecter les clics sur le marqueur
+                                      child: InkWell(
+                                        onTap: () {
+                                          Navigator.push(
+                                            context,
+                                            MaterialPageRoute(
+                                              builder: (context) => ProductPage(
+                                                title: announcement.title,
+                                                location: announcement.location,
+                                                price: announcement.price ?? "N/A",
+                                                description: announcement.description,
+                                                ownerName: announcement.name,
+                                                ownerImage: 'url_to_owner_image',
+                                                ownerRating: 4.5,
+                                              ),
+                                            ),
+                                          );
+                                        },
+                                        child: Icon(
+                                          Icons.place,
+                                          color: Colors.blue,
+                                        ),
+                                      ),
+                                    ),
                               ],
                             ),
                           ],

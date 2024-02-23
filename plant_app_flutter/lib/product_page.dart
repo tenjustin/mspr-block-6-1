@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'custom_app_bar.dart';
+import 'chat.dart';
 
 class ProductPage extends StatelessWidget {
   final String title;
@@ -19,6 +20,7 @@ class ProductPage extends StatelessWidget {
     required this.ownerImage,
     required this.ownerRating,
   });
+
 
   @override
   Widget build(BuildContext context) {
@@ -63,7 +65,20 @@ class ProductPage extends StatelessWidget {
                   ElevatedButton(
                     style: buttonStyle,
                     onPressed: () {
-                      // Add your onPressed logic here
+                      Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                          builder: (context) => ChatPage(conversation:Conversation(
+                            id: 1,
+                            title: 'John Doe',
+                            messages: [
+                              Message(content: 'Salut, comment ça va ?', isMe: true),
+                              Message(content: 'Ça va bien, merci ! Et toi ?', isMe: false),
+                            ],
+                          ),
+                          ),
+                          )
+                      );
                     },
                     child: Text('Message'),
                   ),

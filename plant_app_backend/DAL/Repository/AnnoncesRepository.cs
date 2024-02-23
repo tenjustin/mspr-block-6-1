@@ -34,5 +34,11 @@ namespace plant_app_backend.DAL.Repository
             var annonces = _context.Annonces.Where(a => a.Ville == ville).ToList();
             return annonces;
         }
+
+        public string GetImageName(int id)
+        {
+            var annonce = _context.Annonces.FirstOrDefault(a => a.Id == id);
+            return annonce.ImageName;
+        }
     }
 }

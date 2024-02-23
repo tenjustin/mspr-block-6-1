@@ -7,5 +7,7 @@ namespace plant_app_backend.DAL.Repository.Interface
         void InsertAnnonce(Annonces annonce);
 
         List<Annonces> GetAllAnnoncesByVille(string ville);
+
+        string GetImageName(int id);
     }
 }
