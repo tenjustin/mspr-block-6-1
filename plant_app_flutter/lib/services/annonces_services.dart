@@ -143,4 +143,50 @@ class AnnonceServices {
       client.close();
     }
   }
+
+  Future<List<Announcement>> getAnnoncePage(String location) async {
+    String apiUrl = 'https://10.0.2.2:32768/api/annonces/annonces';
+    String token = await tokenProvider.getToken();
+
+    Uri uri = Uri.parse(apiUrl);
+    String requestBody = json.encode(location);
+
+    var client = await clientProvider.createClient();
+
+    final request = http.Request('POST', uri);
+
+    try{
+      request.headers['Content-Type'] = 'application/json';
+      request.headers['Authorization'] = 'Bearer $token';
+      request.body = requestBody;
+      final response = await client.send(request);
+
+      if(response.statusCode == HttpStatus.ok){
+        String responseBody = await response.stream.bytesToString();
+        List<dynamic> responseData = json.decode(responseBody);
+        List<Announcement> announcements = [];
+        for(var data in responseData){
+          announcements.add(Announcement(
+              title: data["title"],
+              name: data["name"],
+              lastName: data["lastName"],
+              description: data["description"],
+              location: data["location"],
+              latitude: data["latitude"],
+              longitude: data["longitude"],
+              id: data["id"]
+          ));
+        }
+        return announcements;
+      }
+      else{
+        throw Error();
+      }
+    }catch (error){
+      print(error.toString());
+      return List.empty();
+    }finally{
+      client.close();
+    }
+  }
 }

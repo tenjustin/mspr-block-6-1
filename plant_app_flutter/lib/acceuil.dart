@@ -36,29 +36,6 @@ class _LocationPageState extends State<MyHomePage> {
     }
   }
 
-  List<Announcement> announcements = [
-    Announcement(
-      title: "Titre 1",
-      name: "John",
-      lastName: "Doe",
-      description: "Description de l'annonce 1.",
-      price: "10",
-      location: "Béziers",
-      latitude: 43.6109, // Ajoutez la latitude de l'annonce
-      longitude: 3.8772, // Ajoutez la longitude de l'annonce
-    ),
-    Announcement(
-      title: "Titre 2",
-      name: "Jane",
-      lastName: "Doe",
-      description: "Description de l'annonce 2.",
-      price: "16",
-      location: "Montpellier",
-      latitude: 37.4319983, // Ajoutez la latitude de l'annonce
-      longitude: -122.684, // Ajoutez la longitude de l'annonce
-    ),
-  ];
-
   @override
   void initState()  {
     super.initState();

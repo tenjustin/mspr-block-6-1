@@ -49,10 +49,36 @@ namespace plant_app_backend.Controllers
         }
 
         [Authorize]
+        [HttpPost("Annonces")]
+        public ActionResult GetAnnonces([FromBody] string ville)
+        {
+            var result = annoncesRepository.GetAllAnnoncesByVille(ville);
+            var res = result.Select(a =>
+            {
+                var user = _userRepository.GetUserById(a.UserId);
+                return new
+                {
+                    id = a.Id,
+                    title = a.Titre,
+                    description = a.Description,
+                    location = a.Ville,
+                    price = a.Price,
+                    latitude = a.Latitude,
+                    longitude = a.Longitude,
+                    userId = a.UserId,
+                    imageUrl = $"https://localhost:32768/api/annonces/image/{a.Id}",
+                    name = user.Prenom,
+                    lastName = user.Nom
+                };
+            });
+            return Ok(res);
+        }
+
+        [Authorize]
         [HttpPost("HomePage")]
         public ActionResult GetAnnoncesProche([FromBody]string ville)
         { 
-            var result = annoncesRepository.GetAllAnnoncesByVille(ville);
+            var result = annoncesRepository.GetAllAnnoncesByVille(ville).Take(4);
             var res = result.Select(a =>
             {                
                 var user = _userRepository.GetUserById(a.UserId);
