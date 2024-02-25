@@ -29,14 +29,14 @@ class LoginPage extends StatelessWidget {
   ClientProvider httpProvider = ClientProvider();
 
   tryAuth(BuildContext context) async {
-    String apiUrl = 'https://10.0.2.2:32770/api/User/loguser';
+    String apiUrl = 'https://10.0.2.2:32768/api/User/loguser';
     String username = usernameController.text;
     String password = passwordController.text;
 
     Uri uri = Uri.parse(apiUrl);
     String requestBody = jsonEncode({'identifiant': username, 'password': password});
 
-    var client = httpProvider.createClient();
+    var client = await httpProvider.createClient();
 
     final request = http.Request('POST', uri);
 

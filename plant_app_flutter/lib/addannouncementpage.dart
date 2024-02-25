@@ -4,6 +4,7 @@ import 'package:geolocator/geolocator.dart';
 import 'package:image_picker/image_picker.dart';
 import 'dart:io';
 import 'package:plant_app_flutter/models/annoucement.dart';
+import 'package:permission_handler/permission_handler.dart';
 import 'package:plant_app_flutter/models/user.dart';
 import 'package:plant_app_flutter/providers/http_client_provider.dart';
 import 'package:plant_app_flutter/providers/identity_provider.dart';
@@ -153,28 +154,34 @@ class _AddAnnouncementPageState extends State<AddAnnouncementPage> {
                 ),
                 SizedBox(height: 20),
                 ElevatedButton(
-                  onPressed: () {
+                  onPressed: () async {
                     _getCurrentPosition().then((position) {
                       if (position != null) {
                         _updateLocationController(position);
-                        Announcement newAnnouncement = Announcement(
-                          title: _titleController.text,
-                          name: 'John', // Exemple de nom
-                          lastName: 'Doe', // Exemple de nom de famille
-                          description: _descriptionController.text,
-                          location: _locationController.text,
-                          price: _priceController.text.isNotEmpty ? _priceController.text : null,
-                          latitude: position.latitude, // Utilisation de la latitude de la position actuelle
-                          longitude: position.longitude, // Utilisation de la longitude de la position actuelle
-                        );
-
-                        print('Nouvelle annonce: $newAnnouncement');
-
-                        Navigator.pop(context);
                       } else {
                         // Gestion de l'absence de permission ou d'accès à la localisation
                       }
                     });
+                    User user = await identityProvider.getUser();
+                    Announcement newAnnouncement = Announcement(
+                        title: _titleController.text,
+                        name: user.prenom, // Example name
+                        lastName: user.nom, // Example last name
+                        description: _descriptionController.text,
+                        location: _locationController.text,
+                        price: _priceController.text.isNotEmpty
+                            ? _priceController.text
+                            : null,
+                        file: _image,
+                        latitude: latitude,
+                        longitude: longitude,
+                        userId: user.id,
+                        imageUrl: ""
+                    );
+
+                    annonceServices.createAnnonce(newAnnouncement, context);
+
+                    Navigator.pop(context);
                   },
                   child: Text('Ajouter'),
                   style: ElevatedButton.styleFrom(
@@ -183,60 +190,6 @@ class _AddAnnouncementPageState extends State<AddAnnouncementPage> {
                     minimumSize: Size(double.infinity, 0), // Étirez le bouton pour remplir l'espace disponible
                   ),
                 ),
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                  children: [
-                    ElevatedButton.icon(
-                      onPressed: getImageFromCamera,
-                      icon: Icon(Icons.camera_alt),
-                      label: Text('Prendre une photo'),
-                      style: ElevatedButton.styleFrom(
-                        primary: Colors.greenAccent[400],
-                      ),
-                    ),
-                    ElevatedButton.icon(
-                      onPressed: getImageFromGallery,
-                      icon: Icon(Icons.photo_library),
-                      label: Text('Choisir dans la galerie'),
-                      style: ElevatedButton.styleFrom(
-                        primary: Colors.greenAccent[400],
-                      ),
-                    ),
-                  ],
-                ),
-                Row(
-                  children: [
-                    ElevatedButton(
-                      onPressed: () async {
-                        User user = await identityProvider.getUser();
-                        Announcement newAnnouncement = Announcement(
-                          title: _titleController.text,
-                          name: user.prenom, // Example name
-                          lastName: user.nom, // Example last name
-                          description: _descriptionController.text,
-                          location: _locationController.text,
-                          price: _priceController.text.isNotEmpty
-                              ? _priceController.text
-                              : null,
-                          file: _image,
-                          latitude: latitude,
-                          longitude: longitude,
-                          userId: user.id,
-                        );
-
-                        annonceServices.createAnnonce(newAnnouncement, context);
-
-                        print('New Announcement: $newAnnouncement');
-
-                        Navigator.pop(context);
-                      },
-                      child: Text('Ajouter'),
-                      style: ElevatedButton.styleFrom(
-                        primary: Colors.greenAccent[400],
-                      ),
-                    )
-                  ],
-                )
               ],
             ),
           ),

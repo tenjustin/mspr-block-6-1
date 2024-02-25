@@ -9,5 +9,7 @@ namespace plant_app_backend.DAL.Repository.Interface
         List<Annonces> GetAllAnnoncesByVille(string ville);
 
         string GetImageName(int id);
+
+        Annonces GetAnnonceById(int id);
     }
 }

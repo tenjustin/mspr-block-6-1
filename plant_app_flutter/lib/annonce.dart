@@ -1,9 +1,28 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_map/flutter_map.dart';
+import 'package:geocoding/geocoding.dart';
+import 'package:geolocator/geolocator.dart';
+import 'package:latlong2/latlong.dart';
+import 'package:plant_app_flutter/providers/http_client_provider.dart';
+import 'package:plant_app_flutter/providers/token_provider.dart';
+import 'package:plant_app_flutter/services/annonces_services.dart';
 import 'models/annoucement.dart'; // Assurez-vous que le chemin d'importation est correct
 import 'product_page.dart'; // Assurez-vous que cette page est correctement définie
 import 'custom_app_bar.dart'; // Assurez-vous que ce widget est correctement défini
 
-class AnnoncePage extends StatelessWidget {
+class AnnoncePage extends StatefulWidget {
+  static ClientProvider clientProvider = ClientProvider();
+  static TokenProvider tokenProvider = TokenProvider();
+  static AnnonceServices annonceServices = AnnonceServices(clientProvider: clientProvider, tokenProvider: tokenProvider);
+
+  @override
+  State<AnnoncePage> createState() => _AnnoncePageState();
+}
+
+class _AnnoncePageState extends State<AnnoncePage> {
+  Position? _currentPosition;
+  String? ville;
+
   final List<Announcement> ads = [
     Announcement(
       title: 'Besoin de garde',
@@ -26,6 +45,39 @@ class AnnoncePage extends StatelessWidget {
       longitude: 0.0,
     ),
   ];
+
+  Future<Position?> _getCurrentPosition() async {
+    bool serviceEnabled;
+    LocationPermission permission;
+
+    serviceEnabled = await Geolocator.isLocationServiceEnabled();
+    if (!serviceEnabled) {
+      return null;
+    }
+
+    permission = await Geolocator.checkPermission();
+    if (permission == LocationPermission.denied) {
+      permission = await Geolocator.requestPermission();
+      if (permission == LocationPermission.denied) {
+        return null;
+      }
+    }
+
+    if (permission == LocationPermission.deniedForever) {
+      return null;
+    }
+
+    return await Geolocator.getCurrentPosition();
+  }
+
+  Future<String> getCurrentVille() async {
+    _currentPosition = await _getCurrentPosition();
+    List<Placemark> placemarks = await placemarkFromCoordinates(_currentPosition!.latitude, _currentPosition!.longitude);
+    if (placemarks.isNotEmpty) {
+      return placemarks[0].locality ?? '';
+    }
+    return '';
+  }
 
   // Ajoutez le paramètre BuildContext à la méthode
   Widget _buildAnnouncementCard(BuildContext context, Announcement announcement) {
@@ -70,13 +122,7 @@ class AnnoncePage extends StatelessWidget {
                 context,
                 MaterialPageRoute(
                   builder: (context) => ProductPage(
-                    title: "Toi",
-                    location: announcement.location,
-                    price: announcement.price ?? "N/A", // Fournissez une valeur par défaut si le prix est null
-                    description: announcement.description,
-                    ownerName: announcement.name,
-                    ownerImage: 'url_to_owner_image', // Remplacez par l'URL de l'image du propriétaire
-                    ownerRating: 4.5,  // Remplacez par la note du propriétaire
+                    id: announcement.id, // Remplacez par la note du propriétaire
                   ),
                 ),
               );
@@ -106,13 +152,29 @@ class AnnoncePage extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: CustomAppBar(), // Utilisez CustomAppBar ici
-      body: ListView.builder(
-        itemCount: ads.length,
-        itemBuilder: (context, index) {
-          // Passez context en tant que paramètre ici
-          return _buildAnnouncementCard(context, ads[index]);
-        },
-      ),
+      body: FutureBuilder(
+        future: getCurrentVille(),
+        builder: (context, AsyncSnapshot<String> ville){
+          if (ville.connectionState == ConnectionState.active ||
+              ville.connectionState == ConnectionState.waiting || ville.data == null) {
+            return CircularProgressIndicator();
+          }
+          return FutureBuilder(future: AnnoncePage.annonceServices.getAnnoncePage(ville.data!),
+              builder: (context, AsyncSnapshot<List<Announcement>> annonces){
+            if (annonces.connectionState == ConnectionState.active ||
+                annonces.connectionState == ConnectionState.waiting) {
+              return CircularProgressIndicator();
+            }
+            return ListView.builder(
+              itemCount: annonces.data!.length,
+              itemBuilder: (context, index) {
+                // Passez context en tant que paramètre ici
+                return _buildAnnouncementCard(context, annonces.data![index]);
+              },
+            );
+          });
+        }
+      )
     );
   }
 }

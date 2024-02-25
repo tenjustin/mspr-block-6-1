@@ -17,7 +17,7 @@ namespace plant_app_backend.DAL.Models
 
         public string ImageName { get; set; }
 
-        public User User { get; set; }
+        public int UserId { get; set; }
 
         public string Ville { get; set; }
 

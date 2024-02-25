@@ -3,6 +3,9 @@ import 'package:geocoding/geocoding.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:flutter_map/flutter_map.dart';
 import 'package:latlong2/latlong.dart';
+import 'package:plant_app_flutter/providers/http_client_provider.dart';
+import 'package:plant_app_flutter/providers/token_provider.dart';
+import 'package:plant_app_flutter/services/annonces_services.dart';
 import 'models/annoucement.dart';
 import 'package:flutter/material.dart';
 import 'custom_app_bar.dart';
@@ -18,8 +21,11 @@ class MyHomePage extends StatefulWidget {
 
 class _LocationPageState extends State<MyHomePage> {
   String? _currentAddress;
+  String? _currentVille;
   Position? _currentPosition;
-
+  static ClientProvider clientProvider = ClientProvider();
+  static TokenProvider tokenProvider = TokenProvider();
+  static AnnonceServices annonceServices = AnnonceServices(clientProvider: clientProvider, tokenProvider: tokenProvider);
   MapController _mapController = MapController();
 
 
@@ -30,31 +36,8 @@ class _LocationPageState extends State<MyHomePage> {
     }
   }
 
-  List<Announcement> announcements = [
-    Announcement(
-      title: "Titre 1",
-      name: "John",
-      lastName: "Doe",
-      description: "Description de l'annonce 1.",
-      price: "10",
-      location: "Béziers",
-      latitude: 43.6109, // Ajoutez la latitude de l'annonce
-      longitude: 3.8772, // Ajoutez la longitude de l'annonce
-    ),
-    Announcement(
-      title: "Titre 2",
-      name: "Jane",
-      lastName: "Doe",
-      description: "Description de l'annonce 2.",
-      price: "16",
-      location: "Montpellier",
-      latitude: 37.4319983, // Ajoutez la latitude de l'annonce
-      longitude: -122.684, // Ajoutez la longitude de l'annonce
-    ),
-  ];
-
   @override
-  void initState() {
+  void initState()  {
     super.initState();
     _getCurrentPosition();
   }
@@ -152,6 +135,14 @@ class _LocationPageState extends State<MyHomePage> {
   }
 
 
+  Future<String> getCurrentVille() async {
+    List<Placemark> placemarks = await placemarkFromCoordinates(_currentPosition!.latitude, _currentPosition!.longitude);
+    if (placemarks.isNotEmpty) {
+      return placemarks[0].locality ?? '';
+    }
+    return '';
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -190,12 +181,11 @@ class _LocationPageState extends State<MyHomePage> {
                 child: Column(
                   mainAxisAlignment: MainAxisAlignment.start,
                   children: [
-                    SizedBox(height: 20.0),
-
+                    const SizedBox(height: 20.0),
                     Container(
                       height: 300,
                       width: 500,
-                      margin: EdgeInsets.symmetric(horizontal: 20.0),
+                      margin: const EdgeInsets.symmetric(horizontal: 20.0),
                       decoration: BoxDecoration(
                         borderRadius: BorderRadius.circular(15.0),
                         boxShadow: [
@@ -203,7 +193,7 @@ class _LocationPageState extends State<MyHomePage> {
                             color: Colors.black.withOpacity(0.3),
                             spreadRadius: 2,
                             blurRadius: 5,
-                            offset: Offset(0, 2),
+                            offset: const Offset(0, 2),
                           ),
                         ],
                       ),
@@ -221,67 +211,75 @@ class _LocationPageState extends State<MyHomePage> {
                           children: [
                             TileLayer(
                               urlTemplate: 'https://tile.openstreetmap.org/{z}/{x}/{y}.png',
-                              subdomains: ['a', 'b', 'c'],
+                              subdomains: const ['a', 'b', 'c'],
                             ),
-                            MarkerLayer(
-                              markers: [
-                                // Ajoutez d'abord le marqueur pour la position actuelle
-                                Marker(
-                                  width: 80.0,
-                                  height: 80.0,
-                                  point: LatLng(
-                                    _currentPosition?.latitude ?? 0.0,
-                                    _currentPosition?.longitude ?? 0.0,
-                                  ),
-                                  child: Icon(
-                                    Icons.location_pin,
-                                    color: Colors.red,
-                                  ),
-                                ),
-                                // Parcourez maintenant les annonces et ajoutez des marqueurs pour chacune
-                                for (var announcement in announcements)
-                                  if (announcement.latitude != null && announcement.longitude != null)
-                                    Marker(
-                                      width: 80.0,
-                                      height: 80.0,
-                                      point: LatLng(
-                                        // Convertissez la localisation de l'annonce en latitude et longitude
-                                        announcement.latitude!,
-                                        announcement.longitude!,
-                                      ),
-                                      // Utilisez InkWell pour détecter les clics sur le marqueur
-                                      child: InkWell(
-                                        onTap: () {
-                                          Navigator.push(
-                                            context,
-                                            MaterialPageRoute(
-                                              builder: (context) => ProductPage(
-                                                title: announcement.title,
-                                                location: announcement.location,
-                                                price: announcement.price ?? "N/A",
-                                                description: announcement.description,
-                                                ownerName: announcement.name,
-                                                ownerImage: 'url_to_owner_image',
-                                                ownerRating: 4.5,
+                            FutureBuilder(future: getCurrentVille(),
+                                builder: (context, AsyncSnapshot<String> ville){
+                                  if (ville.connectionState == ConnectionState.active ||
+                                      ville.connectionState == ConnectionState.waiting || ville.data == null) {
+                                    return CircularProgressIndicator();
+                                  }
+                              return FutureBuilder(future: annonceServices.getHomeAnnonce(ville.data!),
+                                  builder: (context, AsyncSnapshot<List<Announcement>> annonces){
+                                    if (annonces.connectionState == ConnectionState.active ||
+                                        annonces.connectionState == ConnectionState.waiting) {
+                                      return CircularProgressIndicator();
+                                        }
+                                    return MarkerLayer(
+                                      markers: [
+                                        // Ajoutez d'abord le marqueur pour la position actuelle
+                                        Marker(
+                                          width: 80.0,
+                                          height: 80.0,
+                                          point: LatLng(
+                                            _currentPosition?.latitude ?? 0.0,
+                                            _currentPosition?.longitude ?? 0.0,
+                                          ),
+                                          child: const Icon(
+                                            Icons.location_pin,
+                                            color: Colors.red,
+                                          ),
+                                        ),
+                                        // Parcourez maintenant les annonces et ajoutez des marqueurs pour chacune
+                                        for (var announcement in annonces.data!)
+                                          if (announcement.latitude != null && announcement.longitude != null)
+                                            Marker(
+                                              width: 80.0,
+                                              height: 80.0,
+                                              point: LatLng(
+                                                // Convertissez la localisation de l'annonce en latitude et longitude
+                                                announcement.latitude!,
+                                                announcement.longitude!,
+                                              ),
+                                              // Utilisez InkWell pour détecter les clics sur le marqueur
+                                              child: InkWell(
+                                                onTap: () {
+                                                  Navigator.push(
+                                                    context,
+                                                    MaterialPageRoute(
+                                                      builder: (context) => ProductPage(
+                                                        id: announcement.id,
+                                                      ),
+                                                    ),
+                                                  );
+                                                },
+                                                child: Icon(
+                                                  Icons.place,
+                                                  color: Colors.blue,
+                                                ),
                                               ),
                                             ),
-                                          );
-                                        },
-                                        child: Icon(
-                                          Icons.place,
-                                          color: Colors.blue,
-                                        ),
-                                      ),
-                                    ),
-                              ],
-                            ),
+                                      ],
+                                    );
+                                  });
+                                })
                           ],
                         ),
                       ),
                     ),
                     Container(
-                      margin: EdgeInsets.only(top: 20.0),
-                      child: Text(
+                      margin: const EdgeInsets.only(top: 20.0),
+                      child: const Text(
                         "ANNONCE",
                         style: TextStyle(
                           color: Colors.black,
@@ -292,7 +290,7 @@ class _LocationPageState extends State<MyHomePage> {
 
                     ),
                     Container(
-                      margin: EdgeInsets.all(10.0),
+                      margin: const EdgeInsets.all(10.0),
                       child: ElevatedButton(
                         onPressed: () {
                           Navigator.push(
@@ -308,7 +306,7 @@ class _LocationPageState extends State<MyHomePage> {
                             ),
                           ),
                         ),
-                        child: Text(
+                        child: const Text(
                           "Déposer une annonce",
                           style: TextStyle(
                             color: Colors.black,
@@ -320,20 +318,25 @@ class _LocationPageState extends State<MyHomePage> {
                     ),
                     // Utilisation d'un GridView pour afficher les annonces côte à côte
                     Expanded(
-                      child: GridView.builder(
-                        gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-                          crossAxisCount: 2, // Nombre de colonnes dans le GridView
-                          crossAxisSpacing: 10.0, // Espacement horizontal entre les éléments
-                          mainAxisSpacing: 10.0, // Espacement vertical entre les éléments
-                        ),
-                        itemCount: announcements.length,
-                        itemBuilder: (context, index) {
-                          return _buildAnnouncementCard(announcements[index]);
+                      child: FutureBuilder(future: annonceServices.getHomeAnnonce('Mountain View'),
+                        builder: (context, AsyncSnapshot<List<Announcement>> annonces){
+                          if(annonces.connectionState == ConnectionState.waiting){
+                            return const CircularProgressIndicator();
+                          }
+                          return GridView.builder(
+                            gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+                              crossAxisCount: 2, // Nombre de colonnes dans le GridView
+                              crossAxisSpacing: 10.0, // Espacement horizontal entre les éléments
+                              mainAxisSpacing: 10.0, // Espacement vertical entre les éléments
+                            ),
+                            itemCount: annonces.data!.length,
+                            itemBuilder: (context, index) {
+                              return _buildAnnouncementCard(annonces.data![index]);
+                            },
+                          );
                         },
                       ),
-
                     ),
-
                   ],
                 ),
               ),
@@ -356,29 +359,29 @@ class _LocationPageState extends State<MyHomePage> {
         children: [
           Text(
             announcement.title,
-            style: TextStyle(
+            style: const TextStyle(
               color: Colors.black,
               fontSize: 20.0,
               fontWeight: FontWeight.bold,
             ),
           ),
-          SizedBox(height: 8.0),
+          const SizedBox(height: 8.0),
           Text(
             "${announcement.name} ${announcement.lastName}",
-            style: TextStyle(
+            style: const TextStyle(
               color: Colors.black,
               fontSize: 16.0,
             ),
           ),
-          SizedBox(height: 8.0),
+          const SizedBox(height: 8.0),
           Text(
             announcement.description,
-            style: TextStyle(
+            style: const TextStyle(
               color: Colors.black,
               fontSize: 14.0,
             ),
           ),
-          SizedBox(height: 8.0),
+          const SizedBox(height: 8.0),
           Expanded(
             child: ElevatedButton(
               onPressed: () {
@@ -386,13 +389,7 @@ class _LocationPageState extends State<MyHomePage> {
                   context,
                   MaterialPageRoute(
                     builder: (context) => ProductPage(
-                      title: announcement.title,
-                      location: announcement.location,
-                      price: announcement.price ?? "N/A",
-                      description: announcement.description,
-                      ownerName: announcement.name,
-                      ownerImage: 'url_to_owner_image',
-                      ownerRating: 4.5,
+                      id: announcement.id,
                     ),
                   ),
                 );
@@ -405,7 +402,7 @@ class _LocationPageState extends State<MyHomePage> {
                 ),
                 backgroundColor: MaterialStateProperty.all(Colors.white),
               ),
-              child: Text(
+              child: const Text(
                 "Voir l'annonce",
                 style: TextStyle(
                   color: Colors.black,
