@@ -32,6 +32,7 @@ deploy-job:
   before_script:
     - docker login -u $LOGIN -p $PASSWORD
   script: 
+      - export DOCKER_HOST=tcp://127.0.0.1:2375
       - cd plant_app_backend
       - docker build -t arosaje_api:latest .
       - docker push arosaje_api:latest
