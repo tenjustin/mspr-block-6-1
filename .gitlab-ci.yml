@@ -1,0 +1,38 @@
+image : mcr.microsoft.com/dotnet/sdk:8.0
+
+stages:          
+  - build
+  - test
+  - deploy
+
+build-job:       
+  stage: build
+  script:
+    - cd plant_app_backend
+    - dotnet restore
+    - dotnet build
+
+lint-job:   
+  stage: test    
+  script:
+    - cd plant_app_backend
+    - dotnet tool install -g JetBrains.ReSharper.GlobalTools
+    - export PATH="$PATH:/root/.dotnet/tools"
+    - jb inspectcode plant_app_backend.sln -o=CodeInspection.txt
+  artifacts:
+      paths:
+        - "plant_app_backend/CodeInspection.txt"
+
+deploy-job:
+  stage: deploy
+  image: docker
+  services:
+    - name: docker:dind
+      entrypoint: ["dockerd-entrypoint.sh", "--tls=false"]
+  before_script:
+    - docker login -u $LOGIN -p $PASSWORD
+  script: 
+      - cd plant_app_backend
+      - docker build -t arosaje_api:latest .
+      - docker push arosaje_api:latest
+
